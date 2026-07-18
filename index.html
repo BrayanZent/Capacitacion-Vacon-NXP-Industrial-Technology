@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VACON NXP · Capacitación Interactiva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0f1620;
+    --panel: #16202c;
+    --panel-raised: #1e2a38;
+    --line: #2b3a4a;
+    --text: #e6edf5;
+    --text-dim: #8fa0b3;
+    --sky: #38bdf8;
+    --sky-dim: #163244;
+    --emerald: #34d399;
+    --emerald-dim: #14332a;
+    --red: #f87171;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+  :root.light-theme{
+    --bg: #f3f6fa;
+    --panel: #ffffff;
+    --panel-raised: #eef2f7;
+    --line: #d7e0ea;
+    --text: #1b2530;
+    --text-dim: #5c6b7d;
+    --sky-dim: #e0f2fe;
+    --emerald-dim: #d4f5e4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);}
+  ::selection{background:var(--sky-dim);color:var(--text);}
+
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+  @keyframes slideInLeft{ from{opacity:0; transform:translateX(-14px);} to{opacity:1; transform:translateX(0);} }
+  @keyframes logoIn{ from{opacity:0; transform:scale(.9);} to{opacity:1; transform:scale(1);} }
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  .app{display:flex; min-height:100vh;}
+  .sidebar{
+    width:280px; flex-shrink:0; background:var(--panel);
+    border-right:1px solid var(--line);
+    padding:22px 16px; position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .brand{padding:4px 8px 20px 8px; border-bottom:1px solid var(--line); margin-bottom:16px;}
+  .brand-logo{width:100%; max-width:170px; display:block; margin:0 0 14px 0; background:#fff; border-radius:6px; padding:8px 10px; animation:logoIn .8s cubic-bezier(.2,.8,.3,1);}
+  .brand .tag{font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--emerald); text-transform:uppercase;}
+  .brand h1{font-size:18px; margin:6px 0 2px 0; line-height:1.25;}
+  .brand p{font-size:12px; color:var(--text-dim); margin:0;}
+
+  .navlist{list-style:none; margin:0; padding:0;}
+  .navitem{display:flex; align-items:center; gap:10px; padding:10px 10px; border-radius:6px; cursor:pointer; margin-bottom:2px; border:1px solid transparent; transition:background .2s ease, transform .2s ease;}
+  .navitem:hover{background:var(--panel-raised); transform:translateX(2px);}
+  .navitem.active{background:var(--panel-raised); border-color:var(--line);}
+  .led{width:9px; height:9px; border-radius:50%; flex-shrink:0; background:#3a4048; box-shadow:inset 0 0 0 1px rgba(0,0,0,.4);}
+  .led.done{background:var(--emerald); box-shadow:0 0 6px rgba(52,211,153,.7);}
+  .led.partial{background:var(--sky); box-shadow:0 0 6px rgba(56,189,248,.6);}
+  .navitem .num{font-family:var(--mono); font-size:11px; color:var(--text-dim); width:18px;}
+  .navitem .label{font-size:13.5px;}
+  .navitem.active .label{color:var(--sky);}
+
+  .sidebar-foot{margin-top:18px; padding-top:14px; border-top:1px solid var(--line); font-family:var(--mono); font-size:11px; color:var(--text-dim);}
+  .themebtn{margin-top:10px; width:100%; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.04em; background:transparent; color:var(--text-dim); border:1px solid var(--line); padding:8px 10px; border-radius:6px; cursor:pointer;}
+  .themebtn:hover{color:var(--text); border-color:var(--sky);}
+
+  .main{flex:1; padding:36px 44px; max-width:920px; animation:fadeIn .5s ease;}
+  @media (max-width: 860px){ .app{flex-direction:column;} .sidebar{width:100%; height:auto; position:relative; border-right:none; border-bottom:1px solid var(--line);} .main{padding:24px;} }
+
+  .modhead{margin-bottom:8px;}
+  .modhead .eyebrow{font-family:var(--mono); font-size:11.5px; color:var(--sky); letter-spacing:.1em; text-transform:uppercase; margin:0 0 6px 0;}
+  .modhead h2{font-size:26px; margin:0 0 6px 0; line-height:1.2;}
+  .modhead .sub{color:var(--text-dim); font-size:14px; max-width:62ch; margin:0;}
+
+  .tabs{display:flex; gap:6px; margin:20px 0 22px 0; border-bottom:1px solid var(--line);}
+  .tab{font-family:var(--mono); font-size:12.5px; letter-spacing:.03em; padding:9px 14px; cursor:pointer; color:var(--text-dim); border-bottom:2px solid transparent; text-transform:uppercase;}
+  .tab:hover{color:var(--text);}
+  .tab.active{color:var(--sky); border-bottom-color:var(--sky);}
+
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:20px 22px; margin-bottom:14px; transition:transform .25s ease, border-color .25s ease;}
+  .card:hover{transform:translateY(-2px); border-color:var(--sky);}
+  .card h3{margin:18px 0 8px 0; font-size:14.5px; color:var(--sky); display:flex; align-items:center; gap:8px;}
+  .card h3:first-child{margin-top:0;}
+  .card p{margin:0 0 10px 0; font-size:14px; line-height:1.65;}
+  .card ul, .card ol{margin:8px 0 12px 0; padding-left:18px;}
+  .card li{font-size:13.5px; line-height:1.7; margin-bottom:5px;}
+
+  .note{margin:12px 0; padding:11px 13px; background:rgba(56,189,248,.07); border-left:3px solid var(--sky); font-size:12.5px; color:var(--text-dim); border-radius:0 5px 5px 0;}
+  .note.warn{background:rgba(248,113,113,.08); border-left-color:var(--red);}
+
+  table.tech{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; margin:6px 0 14px 0;}
+  table.tech th, table.tech td{padding:7px 9px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top;}
+  table.tech th{color:var(--sky); font-weight:600; background:var(--panel-raised);}
+  table.tech td{color:var(--text-dim);}
+
+  .fig{margin:14px 0 6px 0; text-align:center;}
+  .fig img{width:100%; max-width:460px; display:block; margin:0 auto; border-radius:6px; border:1px solid var(--line); background:#f5f3ee;}
+  .fig figcaption{font-family:var(--mono); font-size:10.5px; color:var(--text-dim); margin-top:6px;}
+
+  .placeholder{border:1px dashed var(--line); border-radius:8px; padding:16px; text-align:center; font-size:12px; color:var(--text-dim); margin:12px 0;}
+
+  .cardsgrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px; margin-top:6px;}
+  .flash{perspective:1000px; height:130px; cursor:pointer;}
+  .flash-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+  .flash.flipped .flash-inner{transform:rotateY(180deg);}
+  .flash-face{position:absolute; inset:0; backface-visibility:hidden; border:1px solid var(--line); border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12px;}
+  .flash-front{background:var(--panel-raised);}
+  .flash-front .acr{font-family:var(--mono); font-size:19px; color:var(--sky); font-weight:600;}
+  .flash-front .hint{font-size:10px; color:var(--text-dim); margin-top:8px; text-transform:uppercase; letter-spacing:.05em;}
+  .flash-back{background:var(--sky-dim); transform:rotateY(180deg);}
+  .flash-back .full{font-size:12px; font-weight:600; margin-bottom:5px;}
+  .flash-back .desc{font-size:11px; color:var(--text-dim); line-height:1.4;}
+
+  .ovwgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-top:10px;}
+  .ovwcard{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px 18px; cursor:pointer; transition:transform .2s ease, border-color .2s ease;}
+  .ovwcard:hover{border-color:var(--sky); transform:translateY(-3px);}
+  .ovwcard .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;}
+  .ovwcard .t-title{font-size:13.5px; font-weight:600;}
+  .ovwcard .t-sub{font-size:12px; color:var(--text-dim); line-height:1.4;}
+  .ovwcard .t-status{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; color:var(--text-dim);}
+
+  .barwrap{height:5px; background:var(--panel-raised); border-radius:3px; overflow:hidden; margin-top:16px;}
+  .barfill{height:100%; background:linear-gradient(90deg, var(--sky), var(--emerald)); transition:width .4s;}
+
+  .qcounter{font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-bottom:10px;}
+  .qcard{background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:22px;}
+  .qtext{font-size:15.5px; margin:0 0 18px 0; line-height:1.5;}
+  .opt{display:flex; align-items:center; gap:10px; padding:11px 14px; border:1px solid var(--line); border-radius:6px; margin-bottom:9px; cursor:pointer; font-size:13.5px; background:var(--panel-raised); transition:transform .15s ease, border-color .15s ease;}
+  .opt:hover{border-color:var(--sky); transform:translateX(3px);}
+  .opt.correct{border-color:var(--emerald); background:rgba(52,211,153,.1);}
+  .opt.wrong{border-color:var(--red); background:rgba(248,113,113,.1);}
+  .opt .bullet{width:18px; height:18px; border-radius:50%; border:1px solid var(--text-dim); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:10px; color:var(--text-dim);}
+  .opt.correct .bullet{border-color:var(--emerald); color:var(--emerald);}
+  .opt.wrong .bullet{border-color:var(--red); color:var(--red);}
+
+  .explain{margin-top:14px; padding:12px 14px; border-radius:6px; font-size:13px; line-height:1.55; background:var(--panel-raised); border:1px solid var(--line); display:none;}
+  .explain.show{display:block;}
+
+  .qnav{display:flex; justify-content:space-between; align-items:center; margin-top:20px;}
+  .btn{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:.04em; background:var(--sky); color:#04222f; border:none; padding:10px 18px; border-radius:5px; cursor:pointer; font-weight:600; transition:transform .15s ease, background .2s ease;}
+  .btn:hover{background:#67cffb; transform:translateY(-1px);}
+  .btn.ghost{background:transparent; color:var(--text-dim); border:1px solid var(--line);}
+  .btn.ghost:hover{color:var(--text); border-color:var(--sky);}
+  .btn:disabled{opacity:.35; cursor:not-allowed;}
+
+  .quizresult{text-align:center; padding:40px 20px;}
+  .quizresult .score{font-family:var(--mono); font-size:50px; color:var(--sky); margin-bottom:6px;}
+  .quizresult .label{color:var(--text-dim); font-size:12.5px; margin-bottom:22px;}
+
+  .resetrow{margin-top:26px; padding-top:16px; border-top:1px solid var(--line);}
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-thumb{background:#3a4a5a; border-radius:6px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+
+  .flash:focus-visible{outline:2px solid var(--sky); outline-offset:2px;}
+
+  @media print{
+    .sidebar, .no-print, .themebtn, .resetrow{display:none !important;}
+    body{background:#fff; color:#111;}
+    .main{max-width:100%; padding:0;}
+    .card{border:1px solid #999; break-inside:avoid; box-shadow:none;}
+    table.tech th, table.tech td{color:#111; border-bottom:1px solid #999;}
+    table.tech th{background:#eee;}
+    .fig img{max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="sidebar">
+    <div class="brand">
+      <img class="brand-logo" src="Logo empresa.png" alt="Logo de la empresa">
+      <div class="tag">Capacitación técnica</div>
+      <h1>VACON NXP</h1>
+      <p>Especialista en variadores de frecuencia — módulos de estudio y evaluación</p>
+    </div>
+    <ul class="navlist" id="navlist"></ul>
+    <div class="sidebar-foot">
+      Panel CDP312 · progreso guardado en este navegador
+      <button class="themebtn" id="themeToggle">🌓 Cambiar tema</button>
+    </div>
+  </nav>
+
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+/* ============================================================
+   HELPERS DE CONTENIDO
+   ============================================================ */
+const PLACEHOLDER = (txt) => `<div class="placeholder">🖼️ [Marcador de imagen: ${txt}]</div>`;
+const NOTE = (txt) => `<div class="note warn">⚠️ ${txt}</div>`;
+const INFO = (txt) => `<div class="note">💡 ${txt}</div>`;
+const H3 = (txt) => `<h3><span style="width:6px;height:6px;border-radius:50%;background:var(--sky);display:inline-block;"></span>${txt}</h3>`;
+const IMG = (src, caption, source) => `<figure class="fig">
+  <img src="imagenes/${src}" alt="${caption}" loading="lazy">
+  <figcaption>${caption}${source ? ` — <span style="font-style:italic">${source}</span>` : ''}</figcaption>
+</figure>`;
+
+/* ============================================================
+   MÓDULOS
+   ============================================================ */
+const MODULES = [
+{ id:'overview', title:'Panel general', short:'Inicio', isOverview:true },
+
+{
+  id:'seguridad', title:'Seguridad eléctrica y bloqueo', short:'Seguridad',
+  eyebrow:'Módulo 01 · Seguridad', sub:'Riesgo del bus de CC, tiempos de descarga y bloqueo/etiquetado (LOTO).',
+  content:`
+    <div class="card">
+      <p>Un variador de frecuencia no es un equipo pasivo: aunque se corte la alimentación de red, el <strong>banco de condensadores del bus de corriente continua (CC)</strong> almacena energía y puede mantener tensiones letales durante varios minutos. Este módulo cubre tanto el principio general de riesgo eléctrico en variadores como el procedimiento específico documentado por VACON para la familia NXP.</p>
+
+      ${H3("Principio general: por qué el bus de CC sigue siendo peligroso")}
+      <p>En cualquier variador de frecuencia, la etapa rectificadora carga un banco de condensadores que actúa como reserva de energía para alimentar la etapa inversora (IGBT) de forma estable. Estos condensadores tienen una capacitancia considerable y, al desconectar la red, se descargan lentamente a través de resistencias de sangrado internas — el tiempo de esta descarga depende del tamaño del equipo, por lo que <em>nunca</em> debe asumirse que un variador está "sin tensión" solo por haber apagado el interruptor principal.</p>
+
+      ${H3("Procedimiento específico VACON NXP (según manual)")}
+      <ul>
+        <li><strong>Tiempo de espera obligatorio:</strong> tras desconectar la red, esperar <strong>5 minutos</strong> antes de abrir la tapa o puerta del gabinete — los terminales y componentes internos pueden seguir energizados durante ese período.</li>
+        <li><strong>Bloqueo y etiquetado (LOTO):</strong> bloquear y etiquetar la fuente de energía; verificar que ninguna fuente externa (incluido el lado de carga/motor, que puede regenerar tensión si el eje gira) pueda generar tensión inesperada.</li>
+        <li><strong>Puntos de medición de ausencia de tensión:</strong> terminales de motor <code>U, V, W</code>; terminales de resistencia de frenado; terminales del bus de CC (<code>B-, B+/R+, R-</code>). Los terminales de control también pueden portar tensión peligrosa aunque el variador esté desconectado de red.</li>
+        <li><strong>Puesta a tierra:</strong> la corriente de fuga puede superar <strong>3.5 mA CA</strong> (según norma EN 61800-5-1), por lo que se exige conductor de tierra de protección reforzado. Uso obligatorio de <strong>RCD/RCM tipo B</strong> en el lado de red — un RCD tipo A o AC convencional no detecta correctamente las corrientes de fuga con componente de alta frecuencia que genera un variador.</li>
+      </ul>
+
+      ${NOTE("Los manuales VACON revisados no especifican umbrales numéricos exactos de tensión de bus CC (ej. &gt;540V/&gt;900V); el criterio documentado es cualitativo: \"tensión de bus CC superior a los límites permitidos\" (ver también código de falla F2 en el módulo de Diagnóstico). Verificar siempre con instrumento de medición categoría adecuada antes de tocar cualquier terminal de potencia — nunca confiar solo en el tiempo de espera.")}
+
+      ${INFO("Buena práctica de terreno (conocimiento general, no cita textual del manual): documentar cada intervención con un permiso de trabajo eléctrico, verificar la tensión con un multímetro categoría III/IV en los tres puntos (antes de tocar, en el equipo, después del trabajo) y confirmar que el instrumento funciona antes y después de la medición.")}
+
+      ${PLACEHOLDER("Etiqueta de bloqueo/tarjeta LOTO instalada en gabinete VACON NXP")}
+    </div>
+  `,
+  quiz:[
+    { q:"¿Cuánto tiempo mínimo se debe esperar tras desconectar la red antes de abrir el gabinete del VACON NXP?", options:["30 segundos","5 minutos","1 minuto","No es necesario esperar"], answer:1, explain:"El manual exige esperar 5 minutos tras desconectar la red antes de abrir el gabinete, ya que el bus de CC puede seguir energizado durante ese período." },
+    { q:"¿Cuáles terminales deben verificarse como libres de tensión antes de una intervención?", options:["Solo U, V, W del motor","U, V, W, resistencia de frenado y terminales de bus CC (B-, B+/R+, R-)","Solo el terminal de tierra","Solo los terminales de control digital"], answer:1, explain:"El manual exige verificar U/V/W del motor, la resistencia de frenado y los terminales del bus CC antes de considerar el equipo libre de tensión." },
+    { q:"Según el manual, ¿qué corriente de fuga obliga a usar conductor de tierra reforzado?", options:[">0.5 mA CA",">10 mA CA",">3.5 mA CA (EN 61800-5-1)","No se especifica ningún valor"], answer:2, explain:"La norma EN 61800-5-1 citada en el manual fija ese umbral de corriente de fuga como disparador de la exigencia de tierra reforzada." },
+    { q:"¿Qué tipo de RCD/RCM es obligatorio en el lado de red según el manual, y por qué no sirve uno convencional?", options:["Tipo A, por costo","Tipo AC, es el estándar","Tipo B, porque detecta correctamente las corrientes de fuga de alta frecuencia del variador","No se requiere RCD"], answer:2, explain:"Un RCD tipo A o AC convencional no detecta bien las corrientes de fuga con componente de alta frecuencia que genera el variador; por eso se exige tipo B." },
+    { q:"¿Por qué los terminales de control pueden ser peligrosos aunque el variador esté desconectado de la red?", options:["Nunca son peligrosos","Pueden portar tensión peligrosa por fuentes externas o remanente del bus CC","Solo son peligrosos si el motor está girando","Solo aplica a modelos NXS, no NXP"], answer:1, explain:"Fuentes externas conectadas a los terminales de control, o tensión remanente del bus CC, pueden mantenerlos energizados pese a la desconexión de red." }
+  ]
+},
+
+{
+  id:'arquitectura', title:'Arquitectura de potencia y modelos NXP', short:'Arquitectura',
+  eyebrow:'Módulo 02 · Arquitectura', sub:'Clases de bastidor, flujo de potencia rectificador–bus CC–inversor y terminales.',
+  content:`
+    <div class="card">
+      <p>El VACON NXP se fabrica en distintas clases de bastidor ("Frame", FR) según potencia y método de montaje. Conocer esta clasificación es clave para identificar accesorios compatibles, despejes de instalación y método de refrigeración en terreno.</p>
+
+      ${H3("Clases de bastidor (según manual)")}
+      <table class="tech">
+        <tr><th>Clase</th><th>Montaje</th><th>Protección</th></tr>
+        <tr><td>FR4–FR9</td><td>Pared / brida</td><td>IP00 / IP21 (UL Type 1) / IP54 (UL Type 12)</td></tr>
+        <tr><td>FR10–FR11</td><td>Autoportante (free-standing)</td><td>IP00 / IP21 / IP54</td></tr>
+      </table>
+      ${NOTE("Todas las variantes documentadas en los manuales revisados son de <strong>refrigeración por aire</strong>. No se documenta una variante de refrigeración líquida para esta familia — no asumir su existencia sin verificar la placa de tipo del equipo físico.")}
+
+      ${H3("Principio general del flujo de potencia en un VFD")}
+      <p>Todo variador de frecuencia de tipo PWM sigue la misma arquitectura conceptual de tres etapas: una etapa rectificadora convierte la CA de red en CC pulsante, un banco de condensadores del bus intermedio la filtra y estabiliza, y una etapa inversora de transistores IGBT la trocea en pulsos de ancho variable (PWM) que, promediados por la inductancia del motor, reconstruyen una onda de tensión/frecuencia variable. Este principio es el mismo en cualquier fabricante; lo que cambia es la implementación de protección, filtrado y control.</p>
+
+      ${H3("Implementación específica VACON NXP (según manual)")}
+      <ul>
+        <li><strong>Flujo de potencia:</strong> puente rectificador de entrada (6 pulsos, no controlado) → bus de corriente continua intermedio → banco de condensadores de filtrado → etapa inversora con módulos IGBT que generan la salida PWM al motor.</li>
+        <li><strong>Terminales de bus CC:</strong> <code>B- / B+</code> (conexión de bus CC externo, opcional en FR8 y mayores) y <code>R+ / R-</code> (resistencia de frenado externa).</li>
+        <li>FR4–FR9/FR10 tienen una entrada/una salida; FR11 tiene dos entradas/una salida (excepto tipos 0460/0502, con una sola entrada).</li>
+      </ul>
+      ${INFO("Contexto general: la función del banco de condensadores no es solo filtrar — también desacopla al inversor de las variaciones instantáneas de la red, permitiendo que el motor siga girando (\"ride-through\") durante caídas breves de tensión. Un bus de CC compartido entre varios variadores (mediante B-/B+) permite regenerar energía de frenado de un eje hacia otro que esté motorizando, reduciendo el uso de resistencias de frenado.")}
+
+      ${IMG("flujo-potencia-fr4-fr11.png", "Topología de tamaños de carcasa FR4-FR11: rectificador → bus CC → inversor", "Vacon-NXS-NXP-User-Manual-DPD01220F-ES, Imag. 21, p.55")}
+    </div>
+
+    <div class="card">
+      ${H3("Rango de potencia por tensión de red y refrigeración (capacitación interna Vacon NXP)")}
+      <table class="tech">
+        <tr><th>Refrigeración</th><th>Tensión de red</th><th>Rango de potencia</th></tr>
+        <tr><td>Aire</td><td>208-240 V</td><td>0,55-90 kW</td></tr>
+        <tr><td>Aire</td><td>380-500 V</td><td>1,5-1200 kW (hasta 4000 kW con DriveSynch)</td></tr>
+        <tr><td>Aire</td><td>525-690 V</td><td>2,0-2000 kW (hasta 4500 kW con DriveSynch)</td></tr>
+        <tr><td>Líquido</td><td>400-500 V</td><td>132-4100 kW</td></tr>
+        <tr><td>Líquido</td><td>525-690 V</td><td>110-5300 kW</td></tr>
+      </table>
+      ${NOTE("Esta tabla proviene de una capacitación interna complementaria (\"Vacon NXP\", diapositiva 1) y sí documenta una variante de <strong>refrigeración líquida</strong> para potencias altas — a diferencia de los manuales de hardware de tarjetas revisados en el resto de este módulo, que solo cubren variantes de aire. Confirmar siempre el método de refrigeración contra la placa de tipo física del equipo antes de asumir uno u otro.")}
+
+      ${H3("Principio de funcionamiento mecanístico (capacitación interna Vacon NXP)")}
+      <ul>
+        <li>El variador consta mecánicamente de dos unidades: la <strong>unidad de potencia</strong> y la <strong>unidad de control</strong>.</li>
+        <li>La bobina de CA trifásica en el extremo de red, junto con el condensador de enlace de CC, forman un filtro LC que, junto al puente de diodos, produce la alimentación de tensión continua al puente inversor IGBT.</li>
+        <li>La bobina de CA también filtra perturbaciones de alta frecuencia de la red (y las que genera el propio variador) y mejora la forma de onda de la corriente de entrada.</li>
+        <li>El puente inversor IGBT produce la tensión alterna modulada PWM trifásica simétrica que alimenta al motor.</li>
+        <li>El bloque de control de motor y aplicación se basa en un microprocesador, que controla el motor según mediciones, ajustes de parámetros, E/S de control y teclado. Este bloque se comunica con la <strong>tarjeta ASIC de control del motor</strong>, que calcula las posiciones de conmutación de los IGBT; los <strong>controladores de compuerta (gate drivers)</strong> amplifican esas señales para accionar físicamente el puente inversor.</li>
+      </ul>
+
+      ${H3("Unidad de control y alimentación externa 24V (capacitación interna Vacon NXP)")}
+      <p>La unidad de control se compone de la tarjeta de control más las tarjetas adicionales conectadas a los cinco conectores A-E (ver módulo de Tarjetas de control). La tarjeta de control se conecta a la unidad de potencia mediante un conector D o cables de fibra óptica.</p>
+      ${INFO("Puede alimentarse externamente con +24V ±10% conectando una fuente externa a cualquiera de los terminales bidireccionales <strong>nº6 o nº12</strong>. Esta tensión es suficiente para ajustar parámetros y mantener activo el fieldbus <em>sin</em> tener conectada la alimentación de potencia principal — útil para revisar/editar configuración en un equipo que aún no está energizado en potencia.")}
+    </div>
+  `,
+  quiz:[
+    { q:"¿Qué método de refrigeración documentan los manuales de hardware de tarjetas VACON NX/NXP revisados?", options:["Solo líquida","Solo aire","Ambas por igual","Ninguna, es pasivo"], answer:1, explain:"Todas las variantes documentadas en los manuales de hardware de tarjetas revisados son de refrigeración por aire; la variante líquida aparece solo en la capacitación interna complementaria para potencias altas." },
+    { q:"¿Cuál es el orden correcto del flujo de potencia en un VACON NXP?", options:["Inversor IGBT → bus CC → rectificador","Rectificador de entrada → bus CC → banco de condensadores → inversor IGBT","Bus CC → rectificador → motor","Motor → inversor → rectificador"], answer:1, explain:"El flujo sigue: rectificador de entrada, bus CC intermedio, banco de condensadores de filtrado y finalmente la etapa inversora IGBT." },
+    { q:"¿Qué terminales corresponden a la conexión del bus de CC externo?", options:["U, V, W","B- / B+","R+ / R-","DIN1 / DIN2"], answer:1, explain:"B-/B+ son los terminales de conexión del bus de CC externo, opcionales en FR8 y mayores." },
+    { q:"¿En qué terminales de la tarjeta de control puede conectarse una fuente de alimentación externa de 24V para mantener el fieldbus activo sin potencia principal?", options:["Terminal nº6 o nº12","Solo terminal nº1","B+/B-","R+/R-"], answer:0, explain:"Según la capacitación interna Vacon NXP, la unidad de control acepta 24V±10% externos en cualquiera de los terminales bidireccionales nº6 o nº12." },
+    { q:"¿Qué función cumple la tarjeta ASIC de control del motor dentro del bloque de control?", options:["Filtra la red eléctrica","Calcula las posiciones de conmutación de los IGBT a partir de la información del microprocesador","Almacena el historial de fallas","Regula la tensión de red de entrada"], answer:1, explain:"El microprocesador se comunica con la tarjeta ASIC de control del motor, que calcula las posiciones de los IGBT; los gate drivers amplifican esas señales para accionar el inversor." }
+  ]
+},
+
+{
+  id:'tarjetas', title:'Tarjetas de control y slots de expansión', short:'Tarjetas de control',
+  eyebrow:'Módulo 03 · Hardware de control', sub:'Slots A-E con la configuración real de este variador: OPTA1 · OPTAF · OPTA5 · OPTCI · OPTC5.',
+  content:`
+    <div class="card">
+      <p>La unidad de control del VACON NXP dispone de 5 conectores de expansión, etiquetados <strong>A, B, C, D, E</strong>, que permiten adaptar el variador a distintas necesidades de E/S y comunicación sin cambiar la etapa de potencia.</p>
+
+      ${H3("Distribución de slots (según manual)")}
+      <ul>
+        <li>Configuración de fábrica estándar: tarjeta básica de I/O + tarjeta de relé, normalmente instaladas en <strong>Slots A y B</strong>.</li>
+        <li><strong>OPT-A_</strong> (I/O básica, de fábrica) → Slots A, B o C.</li>
+        <li><strong>OPT-B_ / OPT-C_</strong> (expansión I/O opcional / fieldbus) → Slots D y E.</li>
+        <li><strong>OPT-D_</strong> (tarjetas adaptadoras, ej. bus de sistema por fibra óptica) → Slots D y E.</li>
+        <li><strong>OPT-E_</strong> (tarjeta fieldbus, ej. Ethernet) → Slots D y E.</li>
+        <li>"00" en la posición de un slot del código de tipo indica que ese slot no está utilizado.</li>
+      </ul>
+      ${INFO("Lectura práctica del código de tipo: cada posición del código (ej. \"A1A20000C3\") corresponde a un slot físico A-E. Antes de intervenir una tarjeta, siempre confirmar en el código de tipo de la placa qué opción está realmente instalada — el mismo slot físico puede alojar tarjetas distintas según el pedido de fábrica.")}
+      ${IMG("slots-control-A-E.png", "Ranuras A-E en la tarjeta de control de las VACON NXS y NXP", "Vacon-Manual IO Boards.pdf, Figura 1, p.4")}
+    </div>
+
+    <div class="card">
+      ${H3("Configuración real de slots en este variador")}
+      <p>Según los manuales de tarjeta aportados, este equipo tiene las siguientes 5 tarjetas opcionales instaladas, una por cada posición de slot:</p>
+      <table class="tech">
+        <tr><th>Posición</th><th>Slot</th><th>Tarjeta</th><th>Función</th></tr>
+        <tr><td>1</td><td>A</td><td><strong>OPTA1</strong></td><td>E/S básica (2 AI, 6 DI, 1 AO, salidas de relé/DO)</td></tr>
+        <tr><td>2</td><td>B</td><td><strong>OPTAF</strong></td><td>Seguridad: Safe Torque Off (STO) y Safe Stop 1 (SS1) + protección de termistor ATEX</td></tr>
+        <tr><td>3</td><td>C</td><td><strong>OPTA5</strong></td><td>Interfaz de encoder HTL para realimentación de velocidad/posición</td></tr>
+        <tr><td>4</td><td>D</td><td><strong>OPTCI</strong></td><td>Comunicación Ethernet — Modbus/TCP (referenciada también como EtherNet/IP en su manual)</td></tr>
+        <tr><td>5</td><td>E</td><td><strong>OPTC5</strong></td><td>Comunicación Profibus DP, variante de conector D-sub 9 pines</td></tr>
+      </table>
+      ${INFO("Esta distribución (A-E) sigue la convención general del manual: tarjetas OPTA_ de E/S/seguridad/encoder en slots A-C, y tarjetas de comunicación (OPTC_/OPTD_) en slots D-E. Confirmar siempre contra el código de tipo real de la placa antes de intervenir, ya que el pedido de fábrica puede variar.")}
+
+      <p style="margin-top:16px; font-size:13px; color:var(--text-dim);">Toca cada tarjeta para ver su nombre completo y función:</p>
+      <div class="cardsgrid" id="flashgrid"></div>
+    </div>
+
+    <div class="card">
+      ${H3("Tabla de bornera — OPTA1 (tarjeta básica de I/O, slot A)")}
+      <table class="tech">
+        <tr><th>Term.</th><th>Señal</th><th>Descripción</th></tr>
+        <tr><td>1</td><td>+10 Vref</td><td>Salida de tensión de referencia para potenciómetro</td></tr>
+        <tr><td>2</td><td>AI1+</td><td>Entrada analógica 1, 0–10 VCC (P2.1.11) — referencia de frecuencia</td></tr>
+        <tr><td>3</td><td>AI1-</td><td>Tierra de I/O</td></tr>
+        <tr><td>4</td><td>AI2+</td><td>Entrada analógica 2, 0–20 mA — referencia de frecuencia</td></tr>
+        <tr><td>5</td><td>AI2-</td><td>Tierra de I/O</td></tr>
+        <tr><td>6</td><td>+24V</td><td>Salida de tensión de control, máx. 0.1 A</td></tr>
+        <tr><td>7</td><td>GND</td><td>Tierra de I/O</td></tr>
+        <tr><td>8</td><td>DIN1</td><td>Entrada digital — Marcha adelante (P2.2.1)</td></tr>
+        <tr><td>9</td><td>DIN2</td><td>Entrada digital — Marcha reversa</td></tr>
+        <tr><td>10</td><td>DIN3</td><td>Entrada digital — Falla externa (P2.2.2)</td></tr>
+        <tr><td>11</td><td>CMA</td><td>Común para DIN1–DIN3</td></tr>
+        <tr><td>12</td><td>+24V</td><td>Salida de tensión de control</td></tr>
+        <tr><td>13</td><td>GND</td><td>Tierra de I/O</td></tr>
+        <tr><td>14</td><td>DIN4</td><td>Selección velocidad fija 1</td></tr>
+        <tr><td>15</td><td>DIN5</td><td>Selección velocidad fija 2</td></tr>
+        <tr><td>16</td><td>DIN6</td><td>Reset de falla</td></tr>
+        <tr><td>17</td><td>CMB</td><td>Común para DIN4–DIN6</td></tr>
+        <tr><td>18</td><td>AO1+</td><td>Salida analógica 1, 0–20mA — default: frecuencia de salida (P2.3.2)</td></tr>
+        <tr><td>19</td><td>AO1-</td><td>Tierra de I/O</td></tr>
+        <tr><td>20</td><td>DO1</td><td>Salida digital 1 (colector abierto, 50mA/48VCC) — default: READY</td></tr>
+        <tr><td>21-23</td><td>RO1</td><td>Salida de relé 1 — default: RUN</td></tr>
+        <tr><td>24-26</td><td>RO2</td><td>Salida de relé 2 — default: FAULT</td></tr>
+      </table>
+      <p style="font-size:12px; color:var(--text-dim); margin-top:-6px;">Nota: la variante OPT-A3 carece del terminal 24 (sin contacto NO en el relé 2).</p>
+      ${IMG("opta1-bornera.png", "Tarjeta OPTA1 con bloques de terminales 1-20 y jumpers X1/X2/X6", "Vacon-OPT-A1-manual.pdf, Figure 11, p.18")}
+    </div>
+
+    <div class="card">
+      ${H3("OPTA5 — tarjeta de interfaz de encoder (Tabla 11, slot C)")}
+      <table class="tech">
+        <tr><th>Term.</th><th>Señal</th><th>Descripción</th></tr>
+        <tr><td>DIC1A+/-</td><td>Canal A</td><td>Entrada diferencial de encoder, canal A</td></tr>
+        <tr><td>DIC2B+/-</td><td>Canal B</td><td>Entrada diferencial de encoder, canal B</td></tr>
+        <tr><td>DIC3Z+/-</td><td>Canal Z</td><td>Entrada diferencial de encoder, pulso de referencia/cero</td></tr>
+        <tr><td>ENC1Q</td><td>Salida</td><td>Salida de pulsos del encoder hacia otro equipo</td></tr>
+        <tr><td>DIC4</td><td>Entrada digital</td><td>Entrada digital adicional de la tarjeta</td></tr>
+        <tr><td>GND</td><td>Tierra</td><td>Tierra de referencia de señal</td></tr>
+        <tr><td>+15V / +24V</td><td>Alimentación</td><td>Tensión de control para el encoder, seleccionable por jumper X4</td></tr>
+      </table>
+      <p style="font-size:12px; color:var(--text-dim); margin-top:-6px;">Encoder tipo HTL de rango amplio de frecuencia; la tensión de alimentación (+15V o +24V) se selecciona con el bloque de jumpers X4 según el modelo de encoder instalado.</p>
+      ${IMG("opta5-bornera.png", "Tarjeta OPTA5 con bloque de terminales 1-10 y jumpers X2/X4/X5/X6", "Vacon-Manual IO Boards.pdf, sección 3.1.5, p.30")}
+    </div>
+
+    <div class="card">
+      ${H3("OPTAF — tarjeta de seguridad (STO / SS1, slot B)")}
+      <ul>
+        <li>Implementa las funciones de seguridad <strong>Safe Torque Off (STO)</strong> y <strong>Safe Stop 1 (SS1)</strong>, certificadas (IFA / VTT-ATEX según manual).</li>
+        <li>Incluye protección de termistor de motor con certificación ATEX para atmósferas potencialmente explosivas.</li>
+        <li>Dispone de 2 salidas de relé programables adicionales, no vinculadas a la función de seguridad.</li>
+        <li>Compatible con placa de control NXP código <code>VB00761B</code>; se instala en el slot B.</li>
+      </ul>
+      ${NOTE("Al ser una tarjeta de seguridad (no de E/S general), no tiene una bornera de propósito general como OPTA1 — su cableado sigue el esquema de circuito de seguridad descrito en su propio manual (canales redundantes STO), que debe respetarse íntegramente para no invalidar la certificación de seguridad.")}
+
+      ${H3("Detalle real de terreno — canales SD1/SD2, termistor y jumpers (fuente: capacitación \"Fallas típicas VDF turno OLAP\")")}
+      <ul>
+        <li>Los dos canales redundantes de STO están etiquetados en la tarjeta como <strong>SD1</strong> y <strong>SD2</strong> — ambos deben abrirse simultáneamente para que el STO actúe; si solo uno se abre, la tarjeta reporta discrepancia de canal en vez de ejecutar el paro seguro.</li>
+        <li><strong>Entrada de termistor de motor:</strong> se considera activa (dispara protección) cuando la resistencia supera <strong>4000 Ω</strong>; se considera reseteada/normal cuando baja de <strong>2000 Ω</strong>. La zona entre 2000-4000 Ω es una banda de histéresis intencional para evitar oscilación de la protección.</li>
+        <li><strong>Jumper X10:</strong> habilita/deshabilita la supervisión de cortocircuito de la entrada de termistor.</li>
+        <li><strong>Jumper/cable X12:</strong> referencia de puente usada según el esquema de cableado del capítulo 4.2.4 del manual OPTAF (no reemplaza a los canales SD1/SD2; es una referencia auxiliar del circuito).</li>
+        <li>La tarjeta expone además relés programables de propósito general, no vinculados a la función de seguridad: uno configurable como <strong>NA/NC</strong> (contacto conmutado) y otro como <strong>NA</strong> (solo normalmente abierto).</li>
+      </ul>
+      ${IMG("optaf-tarjeta-sto-real.png", "Tarjeta OPT-AF real, con etiquetado de canales SD1/SD2, termistor y jumpers X10/X12", "Fallas típicas VDF turno OLAP V.1.pdf, \"Fallo SafeTorqueOff (8-30)\"")}
+
+      ${H3("OPTCI — comunicación Ethernet (Modbus/TCP, slot D)")}
+      <ul>
+        <li>Conector único <strong>RJ-45</strong> (cable STP CAT-5e mínimo); no tiene bornera tradicional de terminales.</li>
+        <li>Dirección IP por defecto: <code>192.168.0.10</code>; velocidad 10/100 Mb, medio o full dúplex.</li>
+        <li>Implementa <strong>Modbus/TCP</strong> clase 1 (funciones 1,2,3,4,5,6,15,16,23); el propio manual también menciona EtherNet/IP, remitiendo a soporte del fabricante para ese protocolo específico.</li>
+        <li>Mapa de registros: Coils (Control Word), Input Discretes (Status Word), Holding Registers (Process Data IN/OUT, contadores, historial de fallas), Input Registers (contadores de solo lectura).</li>
+      </ul>
+      ${NOTE("Incompatibilidad documentada: si se usa OPTCI para herramientas NC (ej. NCDrive) por Ethernet, no puede usarse simultáneamente la tarjeta OPTD3 en el mismo variador.")}
+
+      ${H3("OPTC5 — comunicación Profibus DP (slot E)")}
+      <p>Variante de la tarjeta Profibus DP con conector <strong>D-sub de 9 pines</strong> (la variante OPTC3 usa un conector pluggable de 5 pines) — misma funcionalidad de protocolo, distinto conector físico. El detalle del protocolo Profibus DP (Control Word/Status Word, tipos PPO, datos de proceso) se cubre en el módulo de <strong>Redes de comunicación</strong> para no duplicar contenido.</p>
+      ${IMG("optc5-conector-dsub9.png", "Conector D-sub 9 pines de la tarjeta OPTC5 y su tabla de señales", "Vacon-OPTC3-C5-Profibus-Option-Board-User-Manual-DPD00892B-UK.pdf, Figure 4-15, p.16")}
+    </div>
+  `,
+  flashcards:[
+    { acr:'OPTA1', full:'Tarjeta básica de E/S', desc:'2 entradas analógicas, 6 digitales, 1 salida analógica, 2 relés y 1 salida digital. Slot A de fábrica.' },
+    { acr:'OPTAF', full:'Tarjeta de seguridad STO/SS1', desc:'Safe Torque Off y Safe Stop 1 certificados, más protección de termistor ATEX. Slot B.' },
+    { acr:'OPTA5', full:'Interfaz de encoder HTL', desc:'Entradas diferenciales de encoder (canales A, B, Z) y salida de pulsos. Slot C.' },
+    { acr:'OPTCI', full:'Comunicación Ethernet', desc:'Modbus/TCP vía puerto RJ-45; IP por defecto 192.168.0.10. Slot D.' },
+    { acr:'OPTC5', full:'Comunicación Profibus DP', desc:'Conector D-sub de 9 pines (frente a 5 pines pluggable de OPTC3). Slot E.' }
+  ],
+  quiz:[
+    { q:"En este variador, ¿qué tarjeta ocupa la posición 1 (slot A) y qué función cumple?", options:["OPTAF, seguridad STO/SS1","OPTA1, E/S básica (analógicas, digitales, relés)","OPTCI, comunicación Ethernet","OPTC5, Profibus DP"], answer:1, explain:"El slot A aloja la tarjeta OPTA1, encargada de la E/S básica del variador." },
+    { q:"¿Qué tarjeta ocupa la posición 2 (slot B) y qué función de seguridad implementa?", options:["OPTA5, encoder","OPTC5, Profibus","OPTAF, Safe Torque Off (STO) y Safe Stop 1 (SS1)","OPTCI, Modbus TCP"], answer:2, explain:"OPTAF, en el slot B, implementa las funciones de seguridad certificadas STO y SS1." },
+    { q:"Según la Tabla 11 del manual de tarjetas de E/S, ¿qué tipo de señal recibe la tarjeta OPTA5 en la posición 3 (slot C)?", options:["Señales de relé de salida","Entradas diferenciales de encoder (canales A, B, Z) más salida de pulsos","Solo comunicación Profibus","Solo entradas analógicas 0-10V"], answer:1, explain:"OPTA5 recibe entradas diferenciales de encoder en los canales A, B y Z, y entrega una salida de pulsos hacia otro equipo." },
+    { q:"La tarjeta OPTCI en la posición 4 (slot D), ¿qué tipo de conexión física tiene y qué incompatibilidad documenta el manual?", options:["Bornera de 26 terminales; incompatible con OPTA1","Puerto RJ-45 Ethernet; incompatible con OPTD3 si se usa para herramientas NC","Conector D-sub 9 pines; incompatible con OPTC3","No tiene conector físico"], answer:1, explain:"OPTCI usa un único puerto RJ-45 y su manual documenta que no puede coexistir con OPTD3 si se usa para herramientas NC (ej. NCDrive) por Ethernet." },
+    { q:"¿Qué diferencia física existe entre la tarjeta OPTC5 (posición 5, slot E) y su variante OPTC3?", options:["OPTC5 no soporta Profibus","OPTC5 usa conector D-sub de 9 pines, OPTC3 usa conector pluggable de 5 pines","OPTC3 es más nueva que OPTC5","No hay diferencia, son nombres iguales"], correct:1, options_note:"", answer:1, explain:"Ambas tarjetas comparten el protocolo Profibus DP, pero difieren en el conector físico: D-sub 9 pines en OPTC5 frente a pluggable de 5 pines en OPTC3." }
+  ]
+},
+
+{
+  id:'redes', title:'Redes de comunicación y mapeo de datos', short:'Redes / Comunicación',
+  eyebrow:'Módulo 04 · Comunicación', sub:'Buses de campo soportados, Palabra de Estado y Palabra de Falla.',
+  content:`
+    <div class="card">
+      <p>El VACON NXP se integra a buses de campo industriales para supervisión y control remoto desde un PLC o SCADA, reemplazando el cableado punto a punto de E/S discretas por un canal de comunicación digital.</p>
+
+      ${H3("Buses soportados (según manual)")}
+      <ul>
+        <li><strong>Buses documentados:</strong> Modbus (serie), Profibus DP (tarjetas OPT-C3/OPT-C5), DeviceNet, y <strong>Modbus/TCP sobre Ethernet</strong> mediante la tarjeta OPT-CI (puerto RJ-45, IP por defecto 192.168.0.10 — ver módulo de Tarjetas de control).</li>
+        <li><strong>Datos de proceso (Process Data):</strong> PD Out 1–8 (variador → maestro): frecuencia de salida, velocidad motor, corriente, torque, potencia, tensión motor, tensión bus CC, código de falla activo. PD In (maestro → variador): Referencia, ControlWord, PD1–PD8.</li>
+      </ul>
+      ${NOTE("EtherNet/IP se menciona en el manual de la tarjeta OPT-CI, pero solo como referencia de contacto con soporte del fabricante — no se encontró en la documentación disponible una tabla de mapeo de protocolo propia para EtherNet/IP (a diferencia de Modbus/TCP, que sí tiene mapa de registros completo documentado). Verificar siempre la tarjeta opcional instalada físicamente (código de tipo, slot D o E) antes de asumir soporte de un protocolo determinado.")}
+      ${INFO("Contexto general: en integraciones típicas de planta, el maestro de bus (PLC/SCADA) escribe la referencia de velocidad y la ControlWord (arranque/paro/reset) en el PD In, y lee continuamente el PD Out para supervisar el estado del variador sin necesidad de cablear entradas/salidas discretas adicionales — esto reduce el cableado y facilita el diagnóstico remoto.")}
+
+      ${H3("Palabra de Estado (Status Word) — Tabla 52 del manual")}
+      <table class="tech">
+        <tr><th>Bit</th><th>Significado</th></tr>
+        <tr><td>b0</td><td>Flujo listo (&gt;90%)</td></tr>
+        <tr><td>b1</td><td>Listo (Ready)</td></tr>
+        <tr><td>b2</td><td>En marcha (Running)</td></tr>
+        <tr><td>b3</td><td>Falla</td></tr>
+        <tr><td>b6</td><td>Habilitación de marcha</td></tr>
+        <tr><td>b7</td><td>Advertencia</td></tr>
+        <tr><td>b11</td><td>Freno CC activo</td></tr>
+        <tr><td>b12</td><td>Solicitud de marcha</td></tr>
+        <tr><td>b13</td><td>Control de límite activo</td></tr>
+        <tr><td>b14</td><td>Control de freno externo ON</td></tr>
+        <tr><td>b15</td><td>Señal de comunicación</td></tr>
+      </table>
+
+      ${H3("Palabra de Falla 1 (Fault Word 1) — Tabla 48 del manual")}
+      <table class="tech">
+        <tr><th>Bit</th><th>Significado</th></tr>
+        <tr><td>b0</td><td>Sobrecorriente / IGBT</td></tr>
+        <tr><td>b1</td><td>Sobretensión</td></tr>
+        <tr><td>b2</td><td>Baja tensión</td></tr>
+        <tr><td>b4</td><td>Falla a tierra</td></tr>
+        <tr><td>b6</td><td>Sobretemperatura del variador</td></tr>
+        <tr><td>b14</td><td>Falla de slot</td></tr>
+      </table>
+    </div>
+  `,
+  quiz:[
+    { q:"¿Qué buses de campo están documentados para VACON NX/NXP?", options:["Solo Ethernet/IP","Modbus, Profibus DP y DeviceNet, más Modbus/TCP vía tarjeta OPT-CI","Solo CAN abierto","Solo Ethernet industrial"], answer:1, explain:"Los manuales documentan Modbus serie, Profibus DP, DeviceNet y Modbus/TCP (este último a través de la tarjeta OPT-CI)." },
+    { q:"En la Status Word, ¿qué indica el bit b2?", options:["Falla","En marcha (Running)","Advertencia","Freno CC activo"], answer:1, explain:"El bit b2 de la Status Word indica que el variador está en marcha (Running)." },
+    { q:"¿Qué contiene típicamente el PD Out (variador → maestro)?", options:["Solo el código de falla","Frecuencia, velocidad, corriente, torque, potencia, tensión motor/bus CC y código de falla","Solo la referencia de velocidad","Solo el ControlWord"], answer:1, explain:"El PD Out agrupa las variables de supervisión: frecuencia, velocidad, corriente, torque, potencia, tensiones y código de falla activo." },
+    { q:"¿Existe en la documentación revisada un mapa de protocolo propio para EtherNet/IP, igual que para Modbus/TCP?", options:["Sí, es el protocolo principal y con mapa completo","No — EtherNet/IP solo se menciona como referencia de contacto con el fabricante, sin mapa de registros propio","Solo en modelos NXS","Solo si se activa por software gratis"], answer:1, explain:"A diferencia de Modbus/TCP (con mapa de registros completo vía OPT-CI), EtherNet/IP solo aparece mencionado como referencia de contacto con soporte del fabricante." },
+    { q:"En la Palabra de Falla 1, ¿qué bit corresponde a falla a tierra?", options:["b0","b1","b4","b14"], answer:2, explain:"El bit b4 de la Palabra de Falla 1 corresponde a falla a tierra." }
+  ]
+},
+
+{
+  id:'programacion', title:'Programación avanzada y entorno NCDrive', short:'NCDrive / Menús',
+  eyebrow:'Módulo 05 · Software', sub:'Árbol de menús M1-M7 y uso del software de soporte NCDrive.',
+  content:`
+    <div class="card">
+      <p>El árbol de parámetros del VACON NXP se organiza en 7 menús principales (M1–M7), accesibles desde el panel de control o desde el software NCDrive en PC.</p>
+
+      ${H3("Árbol de menús M1–M7 (según manual)")}
+      <table class="tech">
+        <tr><th>Menú</th><th>Contenido</th></tr>
+        <tr><td>M1</td><td>Monitor — valores en tiempo real: frecuencia de salida, referencia, velocidad, corriente, torque, potencia, tensión de motor, tensión de bus CC, temperatura, entradas/salidas</td></tr>
+        <tr><td>M2</td><td>Parámetros — grupos de la aplicación activa (ej. G2.1 Básicos, G2.2 Señales de entrada, G2.6 Control de motor, G2.7 Protecciones, G2.9 Fieldbus)</td></tr>
+        <tr><td>M3</td><td>Control de panel — lugar de control, referencia y dirección desde panel</td></tr>
+        <tr><td>M4</td><td>Fallas activas</td></tr>
+        <tr><td>M5</td><td>Historial de fallas</td></tr>
+        <tr><td>M6</td><td>Menú de sistema — idioma, selección de aplicación, transferencia/comparación de parámetros, seguridad (incl. Start-up Wizard), ajustes de panel, configuración de hardware, información del sistema</td></tr>
+        <tr><td>M7</td><td>Tarjetas de expansión instaladas (muestra las opciones detectadas en los slots A-E)</td></tr>
+      </table>
+      ${INFO("Navegación práctica: M1 y M4/M5 son los menús de uso más frecuente en terreno para diagnóstico rápido — M1 muestra qué está haciendo el variador ahora mismo y M5 qué pasó en la última falla. M2 y M6 se usan principalmente durante la puesta en marcha o al modificar la aplicación de control.")}
+
+      ${H3("NCDrive (software de soporte PC)")}
+      <ul>
+        <li>Permite parametrizar el variador asignando funciones a entradas/salidas desde una interfaz gráfica en PC, replicando la misma lógica de programación disponible en el panel.</li>
+        <li>La Status Word de aplicaciones no multipropósito solo puede leerse mediante NCDrive.</li>
+        <li>Configuración de intercambio vía archivo <code>NCDrive.ini</code> (sección [Misc]).</li>
+        <li>Conexión típica: cable de programación PC–variador (puerto del panel o adaptador de comunicación), permitiendo ver y modificar parámetros sin desmontar el panel físico.</li>
+      </ul>
+      ${NOTE("Los procedimientos detallados de carga/descarga completa de aplicaciones de control y el uso del osciloscopio digital en tiempo real no están descritos en los manuales de hardware revisados — corresponden al manual dedicado de NCDrive (no incluido en el espacio de trabajo actual). No inventar pasos de este flujo; remitirse al manual de NCDrive antes de ejecutarlo en un equipo productivo.")}
+    </div>
+
+    <div class="card">
+      ${H3("Panel de control — indicadores de estado (capacitación interna Vacon NXP)")}
+      <p>El panel de control Vacon NX incluye una pantalla alfanumérica con indicadores dedicados de estado, lugar de control y 3 LEDs, además de nueve pulsadores para operar el equipo, ajustar parámetros y monitorizar valores. El panel es extraíble y está aislado del potencial de red.</p>
+      <table class="tech">
+        <tr><th>#</th><th>Indicador</th><th>Significado</th></tr>
+        <tr><td>1</td><td>MARCHA (RUN)</td><td>El motor está en marcha</td></tr>
+        <tr><td>2</td><td>Dirección de rotación</td><td>Indica el sentido de giro del motor</td></tr>
+        <tr><td>3</td><td>PARO (STOP)</td><td>La unidad no está en marcha</td></tr>
+        <tr><td>4</td><td>LISTO (READY)</td><td>Se ilumina cuando hay tensión de CA presente</td></tr>
+        <tr><td>5</td><td>ALARMA (ALARM)</td><td>El variador opera fuera de límites normales</td></tr>
+        <tr><td>6</td><td>FALLO (FAULT)</td><td>Condiciones inseguras; el variador se detiene</td></tr>
+      </table>
+      <table class="tech">
+        <tr><th>Lugar de control</th><th>Significado</th></tr>
+        <tr><td>a</td><td>Terminales de E/S (I/O term)</td></tr>
+        <tr><td>b</td><td>Panel de control (Keypad)</td></tr>
+        <tr><td>c</td><td>Bus de campo / comunicación (Bus/Comm)</td></tr>
+      </table>
+      <table class="tech">
+        <tr><th>LED</th><th>Color</th><th>Significado</th></tr>
+        <tr><td>I</td><td>Verde</td><td>Listo (Ready)</td></tr>
+        <tr><td>II</td><td>Verde</td><td>En marcha (Run)</td></tr>
+        <tr><td>III</td><td>Rojo</td><td>Fallo (Fault)</td></tr>
+      </table>
+      ${INFO("El material fuente resume estos indicadores como \"siete\" en su diapositiva introductoria, pero el detalle ilustrado (usado en esta tabla) enumera 6 indicadores de estado numerados de forma inequívoca — se transcribe aquí el detalle verificado en la imagen, no el resumen textual.")}
+      ${IMG("panel-control-indicadores.png", "Panel de control Vacon NX — indicadores de estado, lugar de control y LEDs", "Vacon NXP.pdf (capacitación interna), \"Panel de control\"")}
+    </div>
+  `,
+  quiz:[
+    { q:"¿Qué menú del árbol de parámetros contiene el historial de fallas?", options:["M2","M4","M5","M7"], answer:2, explain:"M5 es el menú de historial de fallas; M4 muestra las fallas activas." },
+    { q:"¿Qué información se encuentra en el menú M1 (Monitor)?", options:["Historial de fallas","Valores en tiempo real como frecuencia, corriente y torque","Tarjetas de expansión instaladas","Configuración de idioma"], answer:1, explain:"M1 (Monitor) despliega los valores en tiempo real del variador: frecuencia, corriente, torque, tensiones y más." },
+    { q:"¿Dónde se ubica el Start-up Wizard dentro del árbol de menús?", options:["M1","M3","M6 (Menú de sistema)","M7"], answer:2, explain:"El Start-up Wizard vive dentro de M6, el Menú de sistema, junto con idioma, selección de aplicación y seguridad." },
+    { q:"¿Qué permite leer NCDrive que no siempre está disponible desde el panel de control?", options:["El historial de fallas","La Status Word de aplicaciones no multipropósito","El código de falla activo","La temperatura ambiente"], answer:1, explain:"La Status Word de aplicaciones no multipropósito solo puede leerse mediante NCDrive, no desde el panel." },
+    { q:"Según la documentación disponible, ¿están detallados el osciloscopio en tiempo real y el upload/download completo de aplicaciones vía NCDrive en los manuales de hardware?", options:["Sí, con procedimiento paso a paso","No, no están descritos en los manuales de hardware revisados","Solo para NXS, no NXP","Solo mediante Profibus"], answer:1, explain:"Esos procedimientos corresponden al manual dedicado de NCDrive, no incluido entre los manuales de hardware revisados." }
+  ]
+},
+
+{
+  id:'puesta', title:'Puesta en servicio y optimización dinámica (ID Run)', short:'Puesta en marcha',
+  eyebrow:'Módulo 06 · Comisionamiento', sub:'Checklist de arranque, parámetros de placa de motor, ID Run y sintonía del lazo de velocidad.',
+  content:`
+    <div class="card">
+      <p>La puesta en marcha del VACON NXP sigue un checklist estructurado antes de habilitar el control del motor, culminando en una identificación automática (ID Run) que ajusta el modelo interno del motor para un control preciso.</p>
+
+      ${H3("Checklist de arranque (resumen, según manual)")}
+      <ol>
+        <li>Verificación de entrega del equipo</li>
+        <li>Revisión del capítulo de seguridad (ver módulo de Seguridad)</li>
+        <li>Verificar despejes mecánicos y condiciones ambientales</li>
+        <li>Dimensionamiento de cables y fusibles</li>
+        <li>Instalación de cableado de potencia</li>
+        <li>Cableado de terminales de control (ver módulo de Tarjetas de control, tabla OPTA1)</li>
+        <li>Wizard / Menú M6: idioma y selección de aplicación</li>
+        <li>Verificar parámetros de placa de motor en G2.1 contra la placa física</li>
+        <li>Seguir procedimiento de arranque del capítulo 8 del manual</li>
+        <li>Equipo listo para operar</li>
+      </ol>
+
+      ${H3("Parámetros de placa de motor (según manual)")}
+      <table class="tech">
+        <tr><th>ID</th><th>Parámetro</th></tr>
+        <tr><td>ID110 (P2.1.6)</td><td>Tensión nominal</td></tr>
+        <tr><td>ID111 (P2.1.7)</td><td>Frecuencia nominal</td></tr>
+        <tr><td>ID112 (P2.1.8)</td><td>Velocidad nominal</td></tr>
+        <tr><td>ID113 (P2.1.9)</td><td>Corriente nominal</td></tr>
+        <tr><td>ID120 (P2.1.10)</td><td>Cos φ</td></tr>
+      </table>
+      ${INFO("Estos cinco valores deben transcribirse exactamente desde la placa física del motor antes de cualquier ID Run — un dato incorrecto (ej. tensión nominal mal digitada) produce un modelo de motor erróneo y puede derivar en sobrecorriente, torque insuficiente o inestabilidad del lazo de velocidad.")}
+
+      ${H3("Identificación del motor (ID Run) — parámetro ID631, según manual")}
+      <ul>
+        <li><strong>1 = Test Estático:</strong> el variador energiza el motor a frecuencia cero, mide corriente/tensión e identifica la relación U/f sin girar el eje. Es la opción más segura cuando el motor no puede desacoplarse de la carga.</li>
+        <li><strong>2 = Test con Giro (solo NXP):</strong> el variador hace girar el motor a velocidad real para identificar U/f y corriente de magnetización con mayor precisión — requiere eje sin carga mecánica acoplada para no dañar el proceso ni obtener una identificación distorsionada.</li>
+        <li>3 = ID Run de encoder (posición cero para motor PMS con encoder absoluto).</li>
+        <li>El comando de marcha debe darse dentro de 20 s de fijar el parámetro o el ID Run se reinicia.</li>
+      </ul>
+
+      ${H3("Sintonía del lazo de velocidad en control vectorial de flujo")}
+      <p>En modo de lazo cerrado (control vectorial de flujo), el variador regula la velocidad comparando la referencia contra la velocidad real estimada, ajustando el torque entregado. Los parámetros relevantes documentados son: ganancia proporcional Kp (ID613), puntos de quiebre de ganancia adaptativa (ID1299-1301), ganancia y filtro de torque mínimo (ID1295-1297), compensación de aceleración/inercia (ID626), corriente y tiempo de magnetización de arranque (ID627/628) y filtro de error de velocidad (ID1311).</p>
+      ${NOTE("Estos parámetros de sintonía (grupo G2.6.23) solo están expuestos en la Aplicación 6 (multipropósito, lazo cerrado). Modificarlos sin criterio puede generar oscilación de velocidad o sobrecorriente — ajustar de forma incremental y validar en vacío antes de cargar el eje.")}
+    </div>
+  `,
+  quiz:[
+    { q:"Antes de habilitar el control del motor, ¿qué se debe verificar en el paso 8 del checklist?", options:["Solo el idioma del panel","Los parámetros de placa de motor en G2.1 contra la placa física","El historial de fallas","El firmware instalado"], answer:1, explain:"El paso 8 exige contrastar los parámetros de G2.1 con los datos reales de la placa del motor." },
+    { q:"¿Qué diferencia principal existe entre el Test Estático y el Test con Giro (ID Run)?", options:["Son idénticos","El Test con Giro hace girar el motor a velocidad real y requiere eje sin carga; el estático no gira el eje","El Test Estático solo aplica a motores PMS","El Test con Giro no mide corriente"], answer:1, explain:"El Test con Giro identifica U/f y corriente de magnetización girando el eje a velocidad real, por lo que exige que no haya carga mecánica acoplada." },
+    { q:"¿Qué parámetro activa la identificación (ID Run) del motor?", options:["ID110","ID613","ID631","ID1311"], answer:2, explain:"ID631 es el parámetro que selecciona y dispara el tipo de ID Run (estático, con giro o de encoder)." },
+    { q:"¿Cuánto tiempo hay para dar el comando de marcha tras fijar el parámetro de ID Run antes de que se reinicie?", options:["5 segundos","20 segundos","2 minutos","No hay límite de tiempo"], answer:1, explain:"El manual exige dar el comando de marcha dentro de los 20 segundos siguientes a fijar el parámetro, o el ID Run se reinicia." },
+    { q:"¿Qué parámetro corresponde a la ganancia Kp del lazo de velocidad en control vectorial de flujo, y en qué aplicación está disponible?", options:["ID110, en cualquier aplicación","ID613, solo en la Aplicación 6 (multipropósito, lazo cerrado)","ID120, en Aplicación 1","ID631, en todas las aplicaciones"], answer:1, explain:"ID613 es la ganancia Kp del lazo de velocidad, y este grupo de sintonía solo está expuesto en la Aplicación 6 de lazo cerrado." }
+  ]
+},
+
+{
+  id:'diagnostico', title:'Diagnóstico y resolución de fallos en terreno', short:'Diagnóstico',
+  eyebrow:'Módulo 07 · Troubleshooting', sub:'Códigos de falla F1/F2/F3/F9/F52/F54, historial T.1-T.16 y metodología de diagnóstico.',
+  content:`
+    <div class="card">
+      ${NOTE("<strong>Corrección de códigos:</strong> el manual VACON define <strong>F9 como \"Baja tensión\"</strong>, no como falla a tierra. La falla a tierra real corresponde al código <strong>F3</strong>. Este módulo usa los códigos oficiales del manual, no los de un brief anterior.")}
+
+      ${H3("Metodología general de diagnóstico (conocimiento de referencia)")}
+      <p>Antes de reiniciar una falla, es buena práctica de terreno seguir un orden: (1) leer el código exacto en el panel o en M4/M5, (2) revisar el historial de datos congelados (T.1-T.16) para entender las condiciones en el instante de la falla, (3) clasificar la causa probable como mecánica (carga, acople), eléctrica (cableado, aislación, red) o de parametrización (límites mal configurados), y (4) verificar antes de resetear — resetear sin diagnosticar solo oculta el síntoma y puede repetir la falla bajo carga.</p>
+
+      ${H3("Códigos de falla — causas y remedio (según manual)")}
+      <table class="tech">
+        <tr><th>Código</th><th>Falla</th><th>Causas típicas</th><th>Remedio</th></tr>
+        <tr><td>F1</td><td>Sobrecorriente</td><td>Corriente &gt;4×I_High; aumento súbito de carga; cortocircuito en cable de motor; tipo de motor incorrecto</td><td>Revisar carga, motor, cables/conexiones; ejecutar ID Run</td></tr>
+        <tr><td>F2</td><td>Sobretensión</td><td>Tiempo de deceleración muy corto; picos de tensión de red; secuencia Run/Stop muy rápida</td><td>Aumentar tiempo de deceleración; usar chopper/resistencia de frenado; activar controlador de sobretensión</td></tr>
+        <tr><td>F3</td><td>Falla a tierra</td><td>Suma de corrientes de fase del motor ≠ cero — falla de aislación en cables o motor</td><td>Revisar cables de motor y motor (megado)</td></tr>
+        <tr><td>F9</td><td>Baja tensión</td><td>Tensión de red baja; fusible de entrada fundido; falla interna; interruptor de carga no cerrado</td><td>Verificar tensión de red; revisar fusibles de entrada</td></tr>
+        <tr><td>F52</td><td>Fallo de comunicación con panel</td><td>Conexión defectuosa entre panel de control (o NCDrive) y variador</td><td>Revisar panel y conexión de cable</td></tr>
+        <tr><td>F54</td><td>Fallo de slot/ranura</td><td>Tarjeta opcional o slot defectuoso</td><td>Revisar tarjeta y slot; contactar al distribuidor</td></tr>
+      </table>
+
+      ${H3("Historial de Fallas — parámetros T.1 a T.16 (según manual)")}
+      <table class="tech">
+        <tr><th>Param.</th><th>Dato congelado en el momento de la falla</th></tr>
+        <tr><td>T.1 / T.2</td><td>Contador de días / horas de funcionamiento</td></tr>
+        <tr><td>T.3</td><td>Frecuencia de salida</td></tr>
+        <tr><td>T.4</td><td>Corriente de motor</td></tr>
+        <tr><td>T.5</td><td>Tensión de motor</td></tr>
+        <tr><td>T.6 / T.7</td><td>Potencia (%) / Torque (%) del motor</td></tr>
+        <tr><td>T.8</td><td>Tensión de bus CC</td></tr>
+        <tr><td>T.9</td><td>Temperatura del variador</td></tr>
+        <tr><td>T.10 / T.11</td><td>Estado de marcha / Sentido de giro</td></tr>
+        <tr><td>T.12</td><td>Advertencias activas</td></tr>
+        <tr><td>T.13</td><td>Bandera de velocidad cero (&lt;0.01Hz)</td></tr>
+        <tr><td>T.14</td><td>Subcódigo (ver detalle verificado abajo)</td></tr>
+        <tr><td>T.15</td><td>Código de módulo (ver detalle verificado abajo)</td></tr>
+        <tr><td>T.16</td><td>Subcódigo de módulo (ver detalle verificado abajo)</td></tr>
+      </table>
+      ${INFO("Ejemplo de lectura combinada: una falla F1 con T.8 (tensión de bus CC) elevada en el mismo evento sugiere que el disparo fue inducido por energía de frenado regenerativa más que por sobrecarga mecánica pura — dato que orienta el diagnóstico hacia el tiempo de deceleración en vez del motor.")}
+      ${IMG("panel-historial-fallas-m5.png", "Pantalla del panel de control — menú M5, Historial de Fallos", "Vacon-NXS-NXP-User-Manual-DPD01220F-ES, sección 7.8, p.91")}
+
+      ${H3("Detalle verificado T.14 / T.15 / T.16 (fuente: capacitación \"Fallas típicas VDF turno OLAP\")")}
+      <p><strong>T.14 — Subcódigo:</strong> distingue si el origen es un <strong>fallo de sistema</strong> (subcódigos S1...Snº, ver Unidad de Fallo de Sistema código 8) o un <strong>fallo de aplicación</strong> (código A1).</p>
+      <table class="tech">
+        <tr><th>T.15 — Código de módulo</th></tr>
+        <tr><td>Potencia</td></tr><tr><td>Potencia1</td></tr><tr><td>Potencia2</td></tr>
+        <tr><td>Control</td></tr><tr><td>Expansión</td></tr><tr><td>Adaptación</td></tr>
+        <tr><td>Acoplador en estrella</td></tr><tr><td>Motor</td></tr><tr><td>Software</td></tr>
+      </table>
+      <table class="tech">
+        <tr><th>T.16 — Subcódigo de módulo</th></tr>
+        <tr><td>Unidad</td></tr><tr><td>Carta</td></tr>
+        <tr><td>Fase U</td></tr><tr><td>Fase V</td></tr><tr><td>Fase W</td></tr>
+        <tr><td>Ranura A</td></tr><tr><td>Ranura B</td></tr><tr><td>Ranura C</td></tr><tr><td>Ranura D</td></tr><tr><td>Ranura E</td></tr>
+        <tr><td>Aplicación</td></tr>
+      </table>
+    </div>
+  `,
+  quiz:[
+    { q:"Según el manual VACON, ¿a qué falla corresponde el código F9?", options:["Falla a tierra","Baja tensión","Sobrecorriente","Fallo de slot"], answer:1, explain:"F9 corresponde a Baja tensión, no a falla a tierra." },
+    { q:"¿Qué código representa la falla a tierra según el manual?", options:["F1","F2","F3","F9"], answer:2, explain:"F3 es el código oficial de falla a tierra en el manual VACON." },
+    { q:"Un variador dispara F1 (sobrecorriente) tras un aumento súbito de carga. ¿Cuál es la corriente umbral típica que dispara esta falla?", options:[">1×I_High",">4×I_High",">10×I_High","No depende de I_High"], answer:1, explain:"El manual asocia F1 a una corriente superior a 4 veces I_High." },
+    { q:"El variador muestra F52 en terreno. ¿Cuál es la causa más probable?", options:["Sobrecorriente en el motor","Conexión defectuosa entre el panel/NCDrive y el variador","Falla de aislación en el motor","Tensión de bus CC baja"], answer:1, explain:"F52 se asocia a un fallo de comunicación entre el panel de control (o NCDrive) y el variador." },
+    { q:"¿Qué dato queda registrado en el parámetro T.8 del historial de fallas y para qué sirve cruzarlo con una falla F1?", options:["Corriente de motor; no aporta al diagnóstico de F1","Tensión de bus CC; ayuda a distinguir si el disparo fue por energía regenerativa o por sobrecarga mecánica","Temperatura del variador; indica desgaste del ventilador","Sentido de giro; solo sirve para F3"], answer:1, explain:"T.8 congela la tensión de bus CC en el instante de la falla, dato clave para diferenciar un disparo F1 por energía regenerativa de uno por sobrecarga mecánica." },
+    { q:"¿Qué distingue el parámetro T.14 (Subcódigo) según el detalle verificado de la capacitación interna?", options:["Solo el número de días de funcionamiento","Si el origen es un fallo de sistema (S1...Snº) o un fallo de aplicación (A1)","La temperatura del variador","El sentido de giro del motor"], answer:1, explain:"T.14 distingue entre fallo de sistema (subcódigos S1...Snº) y fallo de aplicación (código A1)." }
+  ]
+},
+
+{
+  id:'gama-frames', title:'Código de tipo, gama de potencia y clases físicas (FR4-FR14)', short:'Código de tipo / Frames',
+  eyebrow:'Módulo 08 · Gama de producto', sub:'Cómo leer la placa de tipo NXS/NXP y las clases físicas FR10-FR14 de alta potencia.',
+  content:`
+    <div class="card">
+      <p>Este módulo complementa la Unidad 2 (Arquitectura) con el detalle real de <strong>cómo decodificar la placa de tipo</strong> del equipo y con las clases físicas de mayor potencia (FR10-FR14), no cubiertas en los manuales de tarjetas. Fuente: capacitación interna "Vacon NXP".</p>
+
+      ${H3("Cómo leer el código de tipo (etiquetado NXS/NXP)")}
+      <table class="tech">
+        <tr><th>Campo</th><th>Valores posibles</th></tr>
+        <tr><td>Gama de producto</td><td>NXS = estándar · NXP = alto rendimiento · NXI = INU (unidad inversora)</td></tr>
+        <tr><td>Corriente nominal (sobrecarga baja)</td><td>Ej.: 0007=7A · 0022=22A · 0205=205A</td></tr>
+        <tr><td>Tensión nominal de red (3~)</td><td>2 = 208-240 Vac · 5 = 380-500 Vac · 6 = 525-690 Vac</td></tr>
+        <tr><td>Panel de control</td><td>A=estándar alfanumérico · B=sin panel local · F=panel ficticio (dummy) · G=display gráfico</td></tr>
+        <tr><td>Clase de protección</td><td>0=IP00 (solo FR9) · 2/3=IP21/NEMA1 · 5/7=IP54/NEMA12</td></tr>
+        <tr><td>Nivel de emisión EMC</td><td>C=1er entorno sin restricción · H=1er entorno restringido/2do entorno · L=2do entorno distribución restringida · T=redes IT · N=sin protección EMC</td></tr>
+        <tr><td>Chopper de frenado</td><td>0=sin chopper · 1=chopper interno · 2=chopper interno + resistencia</td></tr>
+        <tr><td>Tarjetas de opción (por slot A-E)</td><td>A=E/S básica · B=E/S expansión · C=bus de campo · D=tarjeta especial/adaptación</td></tr>
+      </table>
+      ${IMG("etiquetado-codigo-nxs-nxp.png", "Decodificación del código de tipo — placa NXS/NXP", "Vacon NXP.pdf (capacitación interna), \"Etiquetado\"")}
+      ${INFO("Aplicación práctica: antes de reemplazar una tarjeta o repuesto, siempre leer el código de tipo completo de la placa física (no solo confiar en el modelo comercial) — dos equipos \"iguales\" pueden diferir en tensión, panel, protección o tarjetas de opción según el pedido de fábrica.")}
+    </div>
+
+    <div class="card">
+      ${H3("Clases físicas de alta potencia — NXP Standalone y módulos FR10-FR14")}
+      <ul>
+        <li><strong>NXP Standalone:</strong> unidad compacta para altas potencias con reactor de CA y fusibles aR integrados; opcionales: interruptor de desconexión, chopper de frenado y terminales de bus DC.</li>
+        <li><strong>FR12:</strong> son dos unidades FR10 en paralelo.</li>
+        <li><strong>Módulos NXP (frames 10-14):</strong> diseñados para instalación simplificada en gabinetes (control, energía y refrigeración integrados en una unidad compacta), con reactores de CA externos; para redes 380-500V/525-690V a 50-60Hz. Alimentación de 6 pulsos como estándar (opcional 12 pulsos). Usan <strong>DriveSynch</strong> para mayores potencias y redundancia del sistema.</li>
+      </ul>
+      ${IMG("fr11-modulos-fase.png", "FR11 — vista de módulos de fase (Figura 6)", "Vacon NXP.pdf (capacitación interna), \"FR 11 potencia\"")}
+
+      ${H3("FR13 y FR14 — módulos IP00 de muy alta potencia")}
+      <p>Ambos son módulos IP00 compuestos por unidades rectificadoras e inversoras; el número de unidades rectificadoras depende de la corriente y del número de pulsos configurado.</p>
+      ${IMG("fr13-modulos-ip00.png", "FR13 — módulos IP00 (rectificador + inversor) con tabla de potencia", "Vacon NXP.pdf (capacitación interna), \"FR 13\"")}
+      ${NOTE("Los valores exactos de potencia/corriente de la tabla FR13/FR14 solo son legibles con certeza en la imagen incluida arriba (la extracción de texto de esa diapositiva no devolvió los números en formato de texto plano) — usar la imagen como referencia visual, no transcribir de memoria.")}
+    </div>
+
+    <div class="card">
+      ${H3("Catálogo general de tarjetas de expansión (familia VACON NX)")}
+      <p>Más allá de las 5 tarjetas realmente instaladas en este equipo (ver Unidad 3), el catálogo general de la familia VACON NX incluye tres tipos de unidad de expansión:</p>
+      <ul>
+        <li><strong>E/S:</strong> entradas digitales (CA/CC), salidas digitales (transistor/relé), termistor, PT100, etc.</li>
+        <li><strong>Encoder:</strong> TTL, HTL, EnDat/SSI, Sin/Cos o resolver.</li>
+        <li><strong>Comunicación:</strong> Profibus DP, DeviceNet, Modbus RTU/TCP, CANopen, Profinet IO, EtherNet/IP, BACnet, entre otros.</li>
+      </ul>
+      ${NOTE("Esta lista es el catálogo general de tarjetas disponibles para la familia VACON NX (según la capacitación interna), no una lista de lo instalado en este equipo específico. Las tarjetas de comunicación realmente instaladas en este variador son OPTCI (Modbus/TCP) y OPTC5 (Profibus DP) — ver Unidades 3 y 4.")}
+    </div>
+  `,
+  quiz:[
+    { q:"En el código de tipo NXS/NXP, ¿qué significa el dígito de tensión \"5\"?", options:["208-240 Vac","380-500 Vac","525-690 Vac","No indica tensión"], answer:1, explain:"El dígito 5 en el campo de tensión nominal de red corresponde a 380-500 Vac." },
+    { q:"¿Qué diferencia hay entre las gamas NXS y NXP en el código de tipo?", options:["Ninguna, son el mismo producto","NXS = estándar, NXP = alto rendimiento (también existe NXI = unidad inversora)","NXP es solo para bombas","NXS no admite panel de control"], answer:1, explain:"NXS es la gama estándar y NXP la de alto rendimiento; NXI corresponde a la unidad inversora (INU)." },
+    { q:"¿Qué es un módulo FR12?", options:["Una tarjeta de comunicación","Dos unidades FR10 en paralelo","Un tipo de encoder","Un panel de control"], answer:1, explain:"FR12 consiste en dos unidades FR10 conectadas en paralelo." },
+    { q:"¿Qué tecnología usan los módulos NXP (frames 10-14) para mayores potencias y redundancia del sistema?", options:["NCDrive","DriveSynch","DriveWindow","Modbus/TCP"], answer:1, explain:"DriveSynch se utiliza en los módulos NXP de frames 10-14 para mayores potencias y redundancia." },
+    { q:"El catálogo general de tarjetas de comunicación de la familia VACON NX menciona CANopen, Profinet IO, EtherNet/IP y BACnet. ¿Significa esto que este equipo específico las tiene instaladas?", options:["Sí, todas están instaladas","No — este equipo solo tiene instaladas OPTCI (Modbus/TCP) y OPTC5 (Profibus DP); el resto es catálogo general de la familia","Sí, pero solo BACnet","No, este equipo no soporta ninguna comunicación"], answer:1, explain:"El catálogo general de la familia no equivale a lo instalado en este equipo específico, que solo tiene OPTCI y OPTC5." }
+  ]
+},
+
+{
+  id:'mantenimiento', title:'Mantenimiento preventivo y almacenamiento prolongado', short:'Mantenimiento',
+  eyebrow:'Módulo 09 · Mantenimiento', sub:'Recomendaciones de fabricante para almacenamiento y reformado de condensadores CC.',
+  content:`
+    <div class="card">
+      <p>Un variador almacenado (repuesto en bodega, equipo de respaldo, etc.) no está exento de mantenimiento: los condensadores electrolíticos del bus de CC se degradan con el tiempo sin uso. Esta unidad transcribe textualmente las recomendaciones de fabricante citadas en la capacitación interna "Vacon NXP".</p>
+
+      ${H3("Recomendaciones de almacenamiento (según capacitación interna, cita textual)")}
+      <ul>
+        <li><strong>Ambiente:</strong> no debe existir polvo en el ambiente; si hay polvo en suspensión, el convertidor debe protegerse adecuadamente para evitar que entre en su interior.</li>
+        <li><strong>Ciclo normal (hasta 24 meses):</strong> si el convertidor se almacena por períodos prolongados, debe conectarse el sistema de alimentación al convertidor <strong>una vez cada 24 meses, durante 2 horas como mínimo</strong>.</li>
+        <li><strong>Más de 24 meses sin ese ciclo:</strong> se debe tener cuidado al cargar los condensadores CC electrolíticos — por eso no se recomienda un período de almacenamiento tan largo sin el ciclo anterior.</li>
+      </ul>
+
+      ${NOTE("<strong>Procedimiento de recarga de condensadores</strong> (solo si se superó el período de 24 meses sin conectar la alimentación normalmente): usar una fuente de alimentación de CC con límite de intensidad ajustable, fijado por ejemplo entre <strong>300 y 500 mA</strong>, conectada a los terminales <strong>B+/B-</strong> (terminales de alimentación de CC). La tensión de CC debe ajustarse al nivel nominal de la unidad (<strong>1,35 × Un CA</strong>) y mantenerse durante al menos <strong>1 hora</strong>.")}
+
+      ${NOTE("Si no se dispone de una fuente de CC y la unidad estuvo almacenada durante <strong>mucho más de un año sin energía</strong>, se debe contactar a fábrica antes de conectarla a la alimentación — no improvisar el reformado de condensadores en ese escenario.")}
+
+      ${INFO("Contexto general de mantenimiento preventivo (no cita textual): además del ciclo de energizado periódico, es buena práctica de terreno inspeccionar visualmente ventiladores y filtros de aire, verificar apriete de terminales de potencia (la vibración y los ciclos térmicos aflojan conexiones con el tiempo), y registrar cada intervención para poder correlacionar fallas futuras con el historial de mantenimiento del equipo.")}
+    </div>
+  `,
+  quiz:[
+    { q:"En condiciones normales de almacenamiento prolongado, ¿cada cuánto tiempo debe conectarse la alimentación al convertidor, y por cuánto tiempo mínimo?", options:["Cada 6 meses, 30 minutos","Cada 24 meses, 2 horas como mínimo","Cada 5 años, 10 minutos","Nunca es necesario"], answer:1, explain:"El ciclo normal recomendado es conectar la alimentación una vez cada 24 meses, durante al menos 2 horas." },
+    { q:"Si el período de almacenamiento supera los 24 meses sin ese ciclo, ¿a qué terminales se conecta la fuente de CC para recargar los condensadores?", options:["U, V, W","R+/R-","B+/B- (terminales de alimentación de CC)","AI1/AI2"], answer:2, explain:"La fuente de alimentación de CC para recargar los condensadores se conecta a los terminales B+/B-." },
+    { q:"¿A qué nivel debe ajustarse la tensión de CC durante el procedimiento de recarga de condensadores, y por cuánto tiempo mínimo?", options:["1,35 × Un CA, durante al menos 1 hora","2 × Un CA, durante 10 minutos","Un CA fijo, durante 24 horas","No se especifica ningún valor"], answer:0, explain:"La tensión de CC debe ajustarse a 1,35 veces la tensión CA nominal de la unidad y mantenerse durante al menos 1 hora." },
+    { q:"¿Qué límite de corriente se recomienda para la fuente de CC durante el reformado de condensadores?", options:["300-500 mA","5-10 A","1-2 A","No se debe limitar la corriente"], answer:0, explain:"Se recomienda un límite de intensidad ajustable, por ejemplo entre 300 y 500 mA." },
+    { q:"Si la unidad estuvo almacenada mucho más de un año sin energía y no hay fuente de CC disponible, ¿qué se debe hacer antes de conectarla a la alimentación?", options:["Conectarla directamente, no hay riesgo","Contactar a fábrica antes de conectarla","Aplicar tensión nominal completa de inmediato","Reemplazar todos los condensadores sin verificar"], answer:1, explain:"En ese escenario el fabricante recomienda contactar a fábrica antes de conectar la unidad a la alimentación." }
+  ]
+},
+
+{
+  id:'fallo-sistema-sto', title:'Fallo de Sistema (código 8) y Safe Torque Off (8-30)', short:'Fallo Sistema / STO',
+  eyebrow:'Módulo 10 · Diagnóstico avanzado', sub:'Subcódigos S1-S11 del fallo de sistema y troubleshooting de la falla STO 8-30.',
+  content:`
+    <div class="card">
+      <p>El <strong>Fallo de Sistema (código 8)</strong> es una de las fallas VACON NX más frecuentes en terreno según la capacitación "Fallas típicas VDF turno OLAP". Este módulo detalla sus subcódigos (T.14=S1...S11) y complementa el diagnóstico de la falla <strong>Safe Torque Off (8-30)</strong> ya introducida a nivel de hardware en la Unidad 3.</p>
+
+      ${H3("Subcódigos del Fallo de Sistema (código 8) — según capacitación interna, cita textual")}
+      <table class="tech">
+        <tr><th>Subcódigo</th><th>Significado</th></tr>
+        <tr><td>S1</td><td>Realimentación de tensión motor</td></tr>
+        <tr><td>S2</td><td>Reservado</td></tr>
+        <tr><td>S3</td><td>Reservado</td></tr>
+        <tr><td>S4</td><td>Disparo ASIC</td></tr>
+        <tr><td>S5</td><td>Perturbación en VaconBus</td></tr>
+        <tr><td>S6</td><td>Realimentación del contacto de carga</td></tr>
+        <tr><td>S7</td><td>Contacto de carga</td></tr>
+        <tr><td>S8</td><td>Sin alimentación en driver card</td></tr>
+        <tr><td>S9</td><td>Comunicación unidad de potencia (TX)</td></tr>
+        <tr><td>S10</td><td>Comunicación unidad de potencia (Disparo)</td></tr>
+        <tr><td>S11</td><td>Comunicación unidad de potencia (medición)</td></tr>
+      </table>
+      ${INFO("Lectura práctica: un Fallo de Sistema con subcódigo S8 o S9-S11 suele apuntar a un problema de comunicación/alimentación entre la tarjeta de control y la unidad de potencia (cableado de fibra óptica o conector D dañado/desconectado — ver Unidad 2), más que a un problema del motor o la carga.")}
+
+      ${H3("Fallo Safe Torque Off — código 8-30 (troubleshooting)")}
+      <p>El STO es un sistema de seguridad integrado en la tarjeta opcional OPT-AF. Su función principal es aislar las señales de salida que controlan los IGBT del inversor — esto no aísla eléctricamente el inversor, sino que impide que la unidad genere par en el eje del motor. Se usa típicamente para prevenir un arranque inesperado o como función de paro de emergencia.</p>
+      <ul>
+        <li>Si el STO se activa sin que se haya solicitado intencionalmente un paro seguro, verificar primero el estado de los canales <strong>SD1/SD2</strong> (ver detalle de hardware en Unidad 3) — una apertura de uno solo de los canales indica discrepancia, no una activación intencional.</li>
+        <li>Verificar la resistencia de la entrada de termistor: si se mantiene sobre 4000 Ω el circuito seguirá disparado aunque se intente resetear; debe bajar de 2000 Ω para considerarse normal.</li>
+        <li>Confirmar la posición del jumper X10 (supervisión de cortocircuito de termistor) — una posición incorrecta puede generar disparos falsos.</li>
+        <li>Revisar la referencia de cableado X12 contra el esquema del capítulo 4.2.4 del manual OPTAF antes de descartar un problema de continuidad en el circuito de seguridad.</li>
+      </ul>
+      ${NOTE("Por tratarse de un circuito de seguridad certificado, nunca puentear manualmente los canales SD1/SD2 para \"forzar\" el rearme — esa acción invalida la certificación de seguridad de la tarjeta y expone a riesgo de arranque inesperado. Ver Unidad 3 para el detalle completo de hardware de OPTAF.")}
+    </div>
+  `,
+  quiz:[
+    { q:"Según la capacitación interna, ¿qué significa el subcódigo S4 del Fallo de Sistema (código 8)?", options:["Reservado","Disparo ASIC","Contacto de carga","Perturbación en VaconBus"], answer:1, explain:"El subcódigo S4 corresponde a Disparo ASIC." },
+    { q:"¿Qué subcódigos del Fallo de Sistema apuntan a un problema de comunicación con la unidad de potencia?", options:["S1 y S2","S9, S10 y S11","S6 y S7","S2 y S3"], answer:1, explain:"S9 (TX), S10 (Disparo) y S11 (medición) corresponden todos a comunicación con la unidad de potencia." },
+    { q:"Si el STO (8-30) se activa y solo uno de los canales SD1/SD2 se abrió, ¿qué indica esto?", options:["Una activación intencional válida","Discrepancia de canal, no una activación intencional de paro seguro","Que el termistor está en buen estado","Que el jumper X12 está mal instalado siempre"], answer:1, explain:"Ambos canales deben abrirse simultáneamente para una activación válida del STO; que solo uno se abra indica discrepancia de canal." },
+    { q:"¿Por debajo de qué resistencia debe bajar el termistor de motor para que la protección se considere reseteada/normal?", options:["4000 Ω","2000 Ω","10000 Ω","500 Ω"], answer:1, explain:"La protección se resetea cuando la resistencia del termistor baja de 2000 Ω; se activa al superar 4000 Ω." },
+    { q:"¿Por qué no se debe puentear manualmente los canales SD1/SD2 para forzar el rearme del STO?", options:["Porque no tiene ningún efecto","Porque invalida la certificación de seguridad de la tarjeta y expone a riesgo de arranque inesperado","Porque daña el termistor de forma permanente","Porque activa automáticamente el Fallo de Sistema"], answer:1, explain:"Puentear manualmente los canales de un circuito de seguridad certificado invalida su certificación y puede provocar un arranque inesperado." }
+  ]
+},
+
+{
+  id:'pulsadores-panel', title:'Pulsadores del panel de control', short:'Pulsadores del panel',
+  eyebrow:'Módulo 11 · Interfaz de operador', sub:'Función exacta de los 9 pulsadores del panel de control VACON NX — según capacitación interna.',
+  content:`
+    <div class="card">
+      <p>Este módulo complementa la Unidad 5 (Programación/NCDrive) con la función real de cada uno de los <strong>9 pulsadores</strong> del panel de control, según la capacitación interna "Vacon NXP".</p>
+      ${H3("Función de cada pulsador (cita textual)")}
+      <table class="tech">
+        <tr><th>Pulsador</th><th>Función</th></tr>
+        <tr><td>Reset</td><td>Se utiliza para restaurar fallos activos.</td></tr>
+        <tr><td>Select</td><td>Cambia entre las dos últimas visualizaciones. Útil para comprobar la influencia que ejerce un valor modificado en algún otro valor.</td></tr>
+        <tr><td>Enter</td><td>1) Confirmar selecciones. 2) Restablecer historial de fallos (manteniendo presionado 2-3 segundos).</td></tr>
+        <tr><td>Navegador arriba (∧)</td><td>Explorar el menú principal y las páginas de diferentes submenús; editar valores.</td></tr>
+        <tr><td>Navegador abajo (∨)</td><td>Explorar el menú principal y las páginas de diferentes submenús; editar valores.</td></tr>
+        <tr><td>Menú izquierda (&lt;)</td><td>Retroceder en el menú; mover el cursor a la izquierda (en el menú de parámetros); salir del modo de edición; mantener presionado 3 segundos para volver al menú principal.</td></tr>
+        <tr><td>Menú derecha (&gt;)</td><td>Avanzar en el menú; mover el cursor a la derecha (en el menú de parámetros); entrar en el modo de edición.</td></tr>
+        <tr><td>Marcha (◇ verde)</td><td>Pone en marcha el motor, si el panel es el lugar de control activo.</td></tr>
+        <tr><td>Paro (▽ rojo)</td><td>Detiene el motor.</td></tr>
+      </table>
+      ${IMG("pulsadores-panel-control.png", "Pulsadores del panel de control y su función", "Vacon NXP.pdf (capacitación interna), \"Pulsadores panel de control\"")}
+      ${INFO("Nota práctica: el pulsador Enter mantenido 2-3 segundos borra el historial de fallas (M5) — distinto de Reset, que solo limpia la falla activa que está bloqueando la marcha. Confundir ambos pulsadores puede hacer perder el historial de fallas útil para diagnóstico antes de haberlo revisado.")}
+    </div>
+  `,
+  quiz:[
+    { q:"¿Qué pulsador se utiliza específicamente para restaurar fallos activos?", options:["Select","Reset","Enter","Navegador arriba"], answer:1, explain:"Reset se utiliza para restaurar fallos activos." },
+    { q:"¿Qué hace el pulsador Select?", options:["Pone en marcha el motor","Cambia entre las dos últimas visualizaciones","Borra el historial de fallas","Entra en modo de edición"], answer:1, explain:"Select cambia entre las dos últimas visualizaciones, útil para comparar el efecto de un valor modificado en otro." },
+    { q:"¿Cómo se restablece el historial de fallas (no solo la falla activa) usando el panel?", options:["Presionando Select una vez","Presionando Enter durante 2-3 segundos","Presionando Marcha y Paro juntos","No es posible desde el panel"], answer:1, explain:"Mantener presionado Enter durante 2-3 segundos restablece el historial de fallas; Reset solo limpia la falla activa." },
+    { q:"¿Qué acción permite el pulsador de Menú izquierda (&lt;) al mantenerlo presionado 3 segundos?", options:["Apagar el panel","Volver al menú principal","Poner en marcha el motor","Borrar el historial de fallas"], answer:1, explain:"Mantener presionado el pulsador de Menú izquierda durante 3 segundos regresa al menú principal." },
+    { q:"¿En qué condición el pulsador de Marcha (◇ verde) efectivamente pone en marcha el motor?", options:["Siempre, sin excepción","Solo si el panel de control es el lugar de control activo","Solo si hay una falla activa","Solo durante el ID Run"], answer:1, explain:"El pulsador de Marcha solo pone en marcha el motor si el panel es el lugar de control activo (ver indicadores a/b/c de la Unidad 5)." }
+  ]
+},
+
+{
+  id:'vistas-despiezadas', title:'Vistas despiezadas y repuestos — clases FR4 a FR9', short:'Despiece / Repuestos',
+  eyebrow:'Módulo 12 · Repuestos y mantenimiento', sub:'Diagramas de despiece y códigos de repuesto para las clases de bastidor de montaje en pared.',
+  content:`
+    <div class="card">
+      <p>Cada clase de bastidor de montaje en pared (FR4 a FR9, ver Unidad 2) tiene su propio diagrama de despiece y listado de códigos de repuesto documentado en la capacitación interna "Vacon NXP". Conocer esta estructura acelera la identificación de repuestos en terreno sin tener que desarmar el equipo para "adivinar" qué pieza corresponde.</p>
+
+      ${H3("FR4 — vista despiezada y lista de repuestos (ejemplo completo)")}
+      <p>El diagrama de despiece numera cada componente (1 a 17 en FR4) y lo relaciona con un código de repuesto y su aplicabilidad por tensión (230V/500V). Por ejemplo: el panel de control y la unidad de control (ítems 1-2) son comunes a ambas tensiones; la tarjeta de potencia (ítem 7) tiene un código distinto para 230V (<code>70CVB00908</code>) que para 500V (<code>70CVB00910</code>); el marco (ítem 12) varía según el rango de corriente (<code>FR04000</code> para 3-9A, <code>FR04015</code> para 12A/INU).</p>
+      ${IMG("fr4-vista-despiezada.png", "FR4 — vista despiezada con tabla de códigos de repuesto", "Vacon NXP.pdf (capacitación interna), \"FR4\"")}
+
+      ${H3("FR9 — vista despiezada (bastidor de mayor potencia dentro del rango de montaje en pared)")}
+      <p>El mismo principio de despiece se aplica a FR9, con una lista de repuestos considerablemente más extensa (44 ítems numerados) que refleja la mayor complejidad del bastidor: ventilador DC dedicado, filtro EMC, barras colectoras paralelas (busbars) y protecciones adicionales de terminales DC, entre otros.</p>
+      ${IMG("fr9-vista-despiezada.png", "FR9 — vista despiezada con tabla de códigos de repuesto", "Vacon NXP.pdf (capacitación interna), \"FR9 potencia\"")}
+
+      ${NOTE("Los diagramas de despiece de FR5, FR6, FR6 690V, FR7 y FR8 siguen el mismo formato (imagen de despiece + tabla de códigos de repuesto) en la capacitación interna, pero no se transcriben aquí uno por uno para no duplicar contenido — el principio de lectura es idéntico al de FR4 y FR9 mostrados arriba. Consultar la capacitación interna \"Vacon NXP\" directamente si se necesita el código de un repuesto de una clase intermedia (FR5-FR8).")}
+
+      ${INFO("Aplicación práctica: antes de pedir un repuesto, identificar primero el número de ítem en el diagrama de despiece correspondiente a la clase de bastidor del equipo (ver código de tipo, Unidad 8) y confirmar la tensión (230V/500V) — varios componentes (ej. tarjeta de potencia, choke/filtro AC) tienen códigos de repuesto distintos según la tensión nominal, aunque se vean físicamente similares.")}
+    </div>
+  `,
+  quiz:[
+    { q:"¿Qué documenta el diagrama de despiece de cada clase de bastidor (FR4-FR9)?", options:["Solo un dibujo sin códigos", "Cada componente numerado junto con su código de repuesto y aplicabilidad por tensión", "Solo las dimensiones externas del gabinete", "Solo el precio de cada repuesto"], answer:1, explain:"El diagrama numera cada pieza y la relaciona con su código de repuesto y la tensión (230V/500V) a la que aplica." },
+    { q:"En el despiece de FR4, ¿por qué la tarjeta de potencia (ítem 7) tiene dos códigos de repuesto distintos?", options:["Por error de catálogo","Porque varían según la tensión: 70CVB00908 (230V) y 70CVB00910 (500V)","Porque uno es original y otro genérico","No tiene códigos distintos"], answer:1, explain:"La tarjeta de potencia tiene un código para 230V y otro distinto para 500V." },
+    { q:"¿Qué diferencia notable existe entre el despiece de FR9 y el de FR4?", options:["FR9 no tiene lista de repuestos","FR9 tiene una lista considerablemente más extensa (44 ítems) reflejando mayor complejidad (ventilador DC, filtro EMC, busbars)","FR4 es más complejo que FR9","Son exactamente iguales"], answer:1, explain:"FR9 documenta 44 ítems de repuesto frente a los 17 de FR4, reflejando su mayor potencia y complejidad." },
+    { q:"¿Qué se debe confirmar antes de pedir un repuesto según la recomendación práctica de esta unidad?", options:["Solo el color del componente","El número de ítem en el diagrama de despiece de la clase de bastidor correspondiente y la tensión nominal (230V/500V)","Nada, todos los repuestos son universales","Solo la fecha de fabricación"], answer:1, explain:"Hay que identificar el ítem correcto en el diagrama de la clase de bastidor y confirmar la tensión, ya que varios componentes cambian de código según la tensión." },
+    { q:"¿Se transcriben en esta unidad, uno por uno, los diagramas de despiece de FR5, FR6, FR7 y FR8?", options:["Sí, en detalle completo","No — siguen el mismo formato que FR4/FR9 y se remite a la capacitación interna para no duplicar contenido","No existen esos diagramas","Solo FR6 tiene diagrama"], answer:1, explain:"Para evitar duplicar contenido, esta unidad muestra FR4 y FR9 como ejemplos completos y remite a la fuente original para las clases intermedias." }
+  ]
+}
+];
+
+/* ============================================================
+   ESTADO + PERSISTENCIA (localStorage)
+   ============================================================ */
+const STORAGE_KEY = 'vacon_training_progress_v2';
+const THEME_KEY = 'vacon-theme';
+
+const state = {
+  currentId: 'overview',
+  view: 'learn',
+  quizProgress: {},
+  quizIndex: {},
+};
+MODULES.forEach(m=>{
+  if(m.quiz){ state.quizProgress[m.id] = { answered: new Array(m.quiz.length).fill(null) }; state.quizIndex[m.id] = 0; }
+});
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    MODULES.forEach(m=>{
+      if(!m.quiz) return;
+      const savedAnswers = saved && saved[m.id];
+      if(Array.isArray(savedAnswers) && savedAnswers.length === m.quiz.length){
+        state.quizProgress[m.id].answered = savedAnswers;
+      }
+    });
+  }catch(e){ console.warn('No se pudo cargar el progreso guardado:', e); }
+}
+function saveProgress(){
+  try{
+    const data = {};
+    MODULES.forEach(m=>{ if(m.quiz) data[m.id] = state.quizProgress[m.id].answered; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }catch(e){ console.warn('No se pudo guardar el progreso:', e); }
+}
+function resetAllProgress(){
+  MODULES.forEach(m=>{
+    if(!m.quiz) return;
+    state.quizProgress[m.id].answered = new Array(m.quiz.length).fill(null);
+    state.quizIndex[m.id] = 0;
+  });
+  saveProgress();
+  render();
+}
+loadProgress();
+
+/* ============================================================
+   TEMA
+   ============================================================ */
+function applyTheme(){
+  const saved = localStorage.getItem(THEME_KEY);
+  if(saved === 'light'){ document.documentElement.classList.add('light-theme'); }
+  else { document.documentElement.classList.remove('light-theme'); }
+}
+applyTheme();
+document.getElementById('themeToggle').addEventListener('click', ()=>{
+  const isLight = document.documentElement.classList.toggle('light-theme');
+  localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+});
+
+/* ============================================================
+   ANIMACIÓN DE ENTRADA
+   ============================================================ */
+function animateIn(container){
+  const items = container.querySelectorAll('.modhead, .card, .fig, .ovwcard, .qcard, .barwrap, .flash');
+  items.forEach((el,i)=>{ el.classList.add('reveal'); el.style.transitionDelay = Math.min(i*70,560)+'ms'; });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ items.forEach(el=>el.classList.add('in')); }));
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+function ledStateFor(m){
+  if(m.isOverview) return '';
+  const p = state.quizProgress[m.id];
+  if(!p) return '';
+  const answeredCount = p.answered.filter(a=>a!==null).length;
+  if(answeredCount===0) return '';
+  if(answeredCount < m.quiz.length) return 'partial';
+  return 'done';
+}
+let sidebarAnimated = false;
+function renderSidebar(){
+  const ul = document.getElementById('navlist');
+  ul.innerHTML = '';
+  MODULES.forEach((m,i)=>{
+    const li = document.createElement('li');
+    li.className = 'navitem' + (state.currentId===m.id ? ' active' : '');
+    if(!sidebarAnimated){ li.style.animation = `slideInLeft .45s cubic-bezier(.2,.7,.3,1) ${i*35}ms both`; }
+    const ledClass = ledStateFor(m);
+    li.innerHTML = `
+      ${m.isOverview ? '<span class="led"></span>' : `<span class="led ${ledClass}"></span>`}
+      <span class="num">${m.isOverview ? '★' : String(i).padStart(2,'0')}</span>
+      <span class="label">${m.short}</span>
+    `;
+    li.onclick = ()=>{ state.currentId = m.id; state.view = 'learn'; render(); window.scrollTo(0,0); };
+    ul.appendChild(li);
+  });
+  sidebarAnimated = true;
+}
+
+/* ============================================================
+   OVERVIEW
+   ============================================================ */
+function renderOverview(){
+  const teachable = MODULES.filter(m=>!m.isOverview);
+  const totalQ = teachable.reduce((s,m)=>s+m.quiz.length,0);
+  const answeredQ = teachable.reduce((s,m)=>s+state.quizProgress[m.id].answered.filter(a=>a!==null).length,0);
+  const pct = totalQ ? Math.round(answeredQ/totalQ*100) : 0;
+
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="modhead">
+      <p class="eyebrow">Capacitación · VACON NXP</p>
+      <h2>Biblioteca de módulos</h2>
+      <p class="sub">Navega libremente entre los 12 módulos. Cada uno tiene su contenido técnico y su quiz — el progreso se guarda automáticamente en este navegador.</p>
+    </div>
+    <div class="barwrap"><div class="barfill" style="width:${pct}%"></div></div>
+    <p style="font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin:8px 0 24px 0;">${answeredQ} / ${totalQ} preguntas respondidas · ${pct}%</p>
+    ${pct===100 ? `
+    <div class="card" style="border-color:var(--emerald); background:var(--emerald-dim);">
+      <h3 style="color:var(--emerald); margin-top:0;">🏆 Capacitación completa</h3>
+      <p style="margin-bottom:0;">Completaste el quiz de los 12 módulos de la capacitación VACON NXP. Puedes reintentar cualquier módulo cuando quieras para reforzar los conceptos con menos aciertos.</p>
+    </div>` : ''}
+    <div class="ovwgrid">
+      ${teachable.map((m,i)=>{
+        const p = state.quizProgress[m.id];
+        const answered = p.answered.filter(a=>a!==null).length;
+        const correct = p.answered.reduce((s,a)=> s + (a===true?1:0), 0);
+        let status = 'sin iniciar';
+        if(answered>0 && answered<m.quiz.length) status = `en curso · ${answered}/${m.quiz.length}`;
+        if(answered===m.quiz.length) status = `completo · ${correct}/${m.quiz.length} correctas`;
+        const startBadge = m.id==='seguridad' ? `<span style="font-family:var(--mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--emerald); border:1px solid var(--emerald); border-radius:4px; padding:2px 6px; margin-left:8px;">Empieza aquí</span>` : '';
+        return `<div class="ovwcard" data-id="${m.id}">
+          <div class="top"><span class="t-title">${String(i).padStart(2,'0')} · ${m.title}${startBadge}</span><span class="led ${ledStateFor(m)}"></span></div>
+          <div class="t-sub">${m.sub}</div>
+          <div class="t-status" style="margin-top:10px;">${status}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="resetrow">
+      <button class="btn ghost" id="resetAllBtn">Borrar todo el progreso guardado</button>
+    </div>
+  `;
+  const resetBtn = document.getElementById('resetAllBtn');
+  if(resetBtn){
+    resetBtn.onclick = ()=>{
+      if(confirm('¿Borrar el progreso guardado de todos los módulos? Esta acción no se puede deshacer.')){
+        resetAllProgress();
+      }
+    };
+  }
+  main.querySelectorAll('.ovwcard').forEach(el=>{
+    el.onclick = ()=>{ state.currentId = el.dataset.id; state.view = 'learn'; render(); window.scrollTo(0,0); };
+  });
+  animateIn(main);
+}
+
+/* ============================================================
+   MÓDULO (learn / quiz)
+   ============================================================ */
+function renderModule(m){
+  const main = document.getElementById('main');
+  const hasCards = !!m.flashcards;
+  main.innerHTML = `
+    <div class="modhead">
+      <p class="eyebrow">${m.eyebrow}</p>
+      <h2>${m.title}</h2>
+      <p class="sub">${m.sub}</p>
+    </div>
+    <div class="tabs no-print">
+      <div class="tab ${state.view==='learn'?'active':''}" data-v="learn">Aprender</div>
+      <div class="tab ${state.view==='quiz'?'active':''}" data-v="quiz">Quiz (${m.quiz.length})</div>
+      <div style="margin-left:auto; align-self:center;"><button class="btn ghost" id="printBtn" style="font-size:10.5px; padding:6px 12px;">🖨️ Imprimir esta unidad</button></div>
+    </div>
+    <div id="modbody"></div>
+  `;
+  main.querySelectorAll('.tab').forEach(t=>{ t.onclick = ()=>{ state.view = t.dataset.v; render(); }; });
+  const printBtn = document.getElementById('printBtn');
+  if(printBtn) printBtn.onclick = ()=> window.print();
+  const body = document.getElementById('modbody');
+  if(state.view==='learn'){
+    body.innerHTML = m.content;
+    if(hasCards) renderFlashcards(m);
+  } else {
+    renderQuiz(m, body);
+  }
+  animateIn(main);
+}
+
+function renderFlashcards(m){
+  const grid = document.getElementById('flashgrid');
+  if(!grid) return;
+  grid.innerHTML = m.flashcards.map((f)=>`
+    <div class="flash" tabindex="0" role="button" aria-label="Tarjeta ${f.acr}, presiona Enter o Espacio para revelar">
+      <div class="flash-inner">
+        <div class="flash-face flash-front"><div class="acr">${f.acr}</div><div class="hint">toca para revelar</div></div>
+        <div class="flash-face flash-back"><div class="full">${f.full}</div><div class="desc">${f.desc}</div></div>
+      </div>
+    </div>
+  `).join('');
+  grid.querySelectorAll('.flash').forEach(el=>{
+    el.onclick = ()=> el.classList.toggle('flipped');
+    el.onkeydown = (e)=>{
+      if(e.key==='Enter' || e.key===' ' || e.key==='Spacebar'){
+        e.preventDefault();
+        el.classList.toggle('flipped');
+      }
+    };
+  });
+}
+
+/* ---------- Quiz engine ---------- */
+function renderQuiz(m, body){
+  const progress = state.quizProgress[m.id];
+  const total = m.quiz.length;
+  const answeredAll = progress.answered.every(a=>a!==null);
+
+  if(answeredAll){
+    const correct = progress.answered.filter(a=>a===true).length;
+    const missed = m.quiz.map((q,qi)=>({q,qi})).filter(x=>progress.answered[x.qi]===false);
+    body.innerHTML = `
+      <div class="qcard">
+        <div class="quizresult">
+          <div class="score">${correct}/${total}</div>
+          <div class="label">respuestas correctas en este módulo</div>
+          <button class="btn ghost" id="retryBtn">Reintentar quiz</button>
+        </div>
+        ${missed.length ? `
+        <div style="text-align:left; margin-top:10px;">
+          <h3 style="color:var(--red);">Preguntas a repasar (${missed.length})</h3>
+          ${missed.map(x=>`
+            <div class="note warn" style="margin:10px 0;">
+              <strong>${x.q.q}</strong><br>
+              Respuesta correcta: ${x.q.options[x.q.answer]}<br>
+              ${x.q.explain}
+            </div>
+          `).join('')}
+        </div>` : ''}
+      </div>
+    `;
+    document.getElementById('retryBtn').onclick = ()=>{
+      progress.answered = new Array(total).fill(null);
+      state.quizIndex[m.id] = 0;
+      saveProgress();
+      render();
+    };
+    return;
+  }
+
+  let idx = state.quizIndex[m.id];
+  if(progress.answered[idx]!==null){
+    idx = progress.answered.findIndex(a=>a===null);
+    state.quizIndex[m.id] = idx;
+  }
+  const q = m.quiz[idx];
+  body.innerHTML = `
+    <div class="qcounter">Pregunta ${idx+1} de ${total}</div>
+    <div class="qcard">
+      <p class="qtext">${q.q}</p>
+      <div id="optlist">
+        ${q.options.map((o,oi)=>`<div class="opt" data-oi="${oi}"><span class="bullet">${String.fromCharCode(65+oi)}</span><span>${o}</span></div>`).join('')}
+      </div>
+      <div class="explain" id="explainBox">${q.explain}</div>
+      <div class="qnav">
+        <span style="font-family:var(--mono); font-size:11px; color:var(--text-dim);">selecciona una opción</span>
+        <button class="btn" id="nextBtn" disabled>Siguiente</button>
+      </div>
+    </div>
+  `;
+  let picked = false;
+  document.querySelectorAll('#optlist .opt').forEach(el=>{
+    el.onclick = ()=>{
+      if(picked) return;
+      picked = true;
+      const oi = parseInt(el.dataset.oi);
+      const isCorrect = oi===q.answer;
+      progress.answered[idx] = isCorrect;
+      saveProgress();
+      document.querySelectorAll('#optlist .opt').forEach(o2=>{
+        const oi2 = parseInt(o2.dataset.oi);
+        if(oi2===q.answer) o2.classList.add('correct');
+        else if(oi2===oi) o2.classList.add('wrong');
+      });
+      document.getElementById('explainBox').classList.add('show');
+      const nb = document.getElementById('nextBtn');
+      nb.disabled = false;
+      nb.onclick = ()=>{
+        state.quizIndex[m.id] = idx+1 < total ? idx+1 : idx;
+        render();
+      };
+      renderSidebar();
+    };
+  });
+}
+
+/* ============================================================
+   RENDER PRINCIPAL
+   ============================================================ */
+function render(){
+  renderSidebar();
+  const m = MODULES.find(mm=>mm.id===state.currentId);
+  if(m.isOverview) renderOverview();
+  else renderModule(m);
+}
+
+render();
+</script>
+</body>
+</html>
