@@ -1,148 +1,205 @@
-<!doctype html>
-<html lang="es">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centro de Capacitación · Industrial Technology</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg: #0f1620;
-    --panel: #16202c;
-    --panel-raised: #1e2a38;
-    --line: #2b3a4a;
-    --text: #e6edf5;
-    --text-dim: #8fa0b3;
-    --sky: #38bdf8;
-    --sky-dim: #163244;
-    --emerald: #34d399;
-    --emerald-dim: #14332a;
-    --red: #f87171;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-  }
-  :root.light-theme{
-    --bg: #f3f6fa;
-    --panel: #ffffff;
-    --panel-raised: #eef2f7;
-    --line: #d7e0ea;
-    --text: #1b2530;
-    --text-dim: #5c6b7d;
-    --sky-dim: #e0f2fe;
-    --emerald-dim: #d4f5e4;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);}
-  ::selection{background:var(--sky-dim);color:var(--text);}
-
-  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
-  @keyframes logoIn{ from{opacity:0; transform:scale(.9);} to{opacity:1; transform:scale(1);} }
-  .reveal{opacity:0; transform:translateY(18px); transition:opacity .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);}
-  .reveal.in{opacity:1; transform:translateY(0);}
-
-  .wrap{max-width:980px; margin:0 auto; padding:56px 24px 80px 24px; animation:fadeIn .5s ease;}
-
-  .topbar{display:flex; justify-content:flex-end; margin-bottom:18px;}
-  .themebtn{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.04em; background:transparent; color:var(--text-dim); border:1px solid var(--line); padding:8px 14px; border-radius:6px; cursor:pointer;}
-  .themebtn:hover{color:var(--text); border-color:var(--sky);}
-
-  .hero{text-align:center; margin-bottom:48px;}
-  .hero-logo{width:170px; display:block; margin:0 auto 22px auto; background:#fff; border-radius:8px; padding:10px 14px; animation:logoIn .8s cubic-bezier(.2,.8,.3,1);}
-  .hero .tag{font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; color:var(--emerald); text-transform:uppercase; margin-bottom:10px;}
-  .hero h1{font-size:32px; margin:0 0 10px 0; line-height:1.2;}
-  .hero p{color:var(--text-dim); font-size:14.5px; max-width:56ch; margin:0 auto;}
-
-  .section-label{font-family:var(--mono); font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--sky); margin:0 0 14px 4px;}
-
-  .traingrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; margin-bottom:40px;}
-  .traincard{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:22px 24px; cursor:pointer; text-decoration:none; color:var(--text); display:block; transition:transform .2s ease, border-color .2s ease;}
-  .traincard:hover{border-color:var(--sky); transform:translateY(-3px);}
-  .traincard .top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;}
-  .traincard .icon{width:38px; height:38px; border-radius:8px; background:var(--sky-dim); color:var(--sky); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;}
-  .traincard .badge{font-family:var(--mono); font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--emerald); border:1px solid var(--emerald); border-radius:4px; padding:3px 7px; height:fit-content;}
-  .traincard h3{font-size:16.5px; margin:4px 0 6px 0;}
-  .traincard .meta{font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:10px;}
-  .traincard p{font-size:13px; color:var(--text-dim); line-height:1.6; margin:0;}
-  .traincard .cta{margin-top:14px; font-family:var(--mono); font-size:11px; color:var(--sky); text-transform:uppercase; letter-spacing:.04em;}
-
-  .placeholder-card{border:1px dashed var(--line); border-radius:10px; padding:22px 24px; color:var(--text-dim); font-size:13px; display:flex; align-items:center; justify-content:center; text-align:center; min-height:150px;}
-
-  .foot{text-align:center; font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-top:40px; padding-top:20px; border-top:1px solid var(--line);}
-
-  @media (max-width:600px){ .wrap{padding:32px 16px 60px 16px;} .hero h1{font-size:26px;} }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
 </head>
 <body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+    body{margin:0;}
+    a{color:inherit;}
+  </style>
+</helmet>
 
-<div class="wrap">
-  <div class="topbar">
-    <button class="themebtn" id="themeToggle">🌓 Cambiar tema</button>
-  </div>
+<div style="{{ pageStyle }}">
+  <header style="{{ headerStyle }}; position:relative; z-index:2;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="background:#fff; border-radius:6px; padding:7px 12px; display:flex; align-items:center; box-shadow:0 1px 2px rgba(0,0,0,.15);">
+        <img src="assets/logo-industrial-technology.png" alt="Industrial Technology" style="height:30px; display:block;">
+      </div>
+      <div style="width:1px; height:28px; background:{{ vars.line }};"></div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:{{ vars.accent }};">Centro de Capacitación Técnica</div>
+    </div>
 
-  <div class="hero reveal">
-    <img class="hero-logo" src="Logo empresa.png" alt="Logo de la empresa">
-    <div class="tag">Centro de capacitación</div>
-    <h1>Industrial Technology</h1>
-    <p>Selecciona una capacitación para comenzar. Tu progreso se guarda automáticamente en este navegador, módulo por módulo.</p>
-  </div>
+    <nav style="display:flex; align-items:center; gap:30px;">
+      <a href="#hero" style="{{ navLinkStyle }}">Inicio</a>
+      <a href="#cursos" style="{{ navLinkStyle }}">Capacitaciones</a>
+      <a href="#contacto" style="{{ navLinkStyle }}">Contacto</a>
+      <button onClick="{{ toggleTheme }}" style="{{ themeSwitchStyle }}" aria-label="Cambiar tema">
+        <span style="{{ themeKnobStyle }}"></span>
+      </button>
+    </nav>
+  </header>
 
-  <p class="section-label reveal">Capacitaciones disponibles</p>
-  <div class="traingrid" id="traingrid"></div>
+  <section id="hero" style="{{ heroStyle }}; position:relative; z-index:2;">
+    <div style="{{ heroGridBg }}"></div>
+    <div style="position:relative; max-width:760px; margin:0 auto; padding:0 40px; text-align:center;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:{{ vars.accent }}; margin-bottom:18px;">Industrial Technology · VFD Training</div>
+      <h1 style="font-size:44px; line-height:1.15; margin:0 0 18px 0; font-weight:800; color:{{ vars.text }}; letter-spacing:-.01em;">Centro de Capacitación<br>Industrial Technology</h1>
+      <p style="font-size:17px; line-height:1.6; color:{{ vars.textDim }}; margin:0 auto 32px auto; max-width:56ch;">Capacitación técnica especializada en variadores de frecuencia multimarca — módulos, evaluaciones y fichas de estudio pensados para técnicos e ingenieros de mantenimiento industrial.</p>
+      <a href="#cursos" style="{{ ctaStyle }}">Ver capacitaciones disponibles ↓</a>
+    </div>
+  </section>
 
-  <div class="foot reveal">Nuevas capacitaciones se agregarán a este panel próximamente.</div>
+  <section id="cursos" style="position:relative; z-index:2; padding:72px 40px 90px 40px; max-width:1180px; margin:0 auto;">
+    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:20px; margin-bottom:32px; border-bottom:1px solid {{ vars.line }}; padding-bottom:18px;">
+      <div>
+        <h2 style="font-size:24px; margin:0 0 6px 0; color:{{ vars.text }}; font-weight:700;">Capacitaciones disponibles</h2>
+        <p style="margin:0; font-size:14px; color:{{ vars.textDim }};">Selecciona un equipo para comenzar o continuar tu evaluación técnica.</p>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:{{ vars.textDim }}; white-space:nowrap;">Progreso guardado en este navegador</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px;">
+      <sc-for list="{{ courses }}" as="c" hint-placeholder-count="3">
+        <div style="{{ c.cardStyle }}">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <span style="{{ c.brandBadgeStyle }}">{{ c.brand }}</span>
+            <div style="{{ c.ringStyle }}">
+              <div style="{{ c.ringInnerStyle }}">{{ c.ringLabel }}</div>
+            </div>
+          </div>
+
+          <h3 style="font-size:17px; margin:0 0 6px 0; color:{{ vars.text }}; font-weight:700;">{{ c.title }}</h3>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; color:{{ vars.accent }}; letter-spacing:.05em; margin-bottom:10px;">{{ c.model }}</div>
+          <p style="font-size:13.5px; line-height:1.6; color:{{ vars.textDim }}; margin:0 0 20px 0; min-height:58px;">{{ c.desc }}</p>
+
+          <div style="height:4px; border-radius:2px; background:{{ vars.lineSoft }}; overflow:hidden; margin-bottom:16px;">
+            <div style="{{ c.barFillStyle }}"></div>
+          </div>
+
+          <a href="{{ c.href }}" style="{{ c.buttonStyle }}">{{ c.buttonLabel }}</a>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <footer id="contacto" style="{{ footerStyle }}; position:relative; z-index:2;">
+    <div style="max-width:1180px; margin:0 auto; padding:44px 40px; display:flex; flex-wrap:wrap; gap:40px; justify-content:space-between; align-items:flex-start;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="background:#fff; border-radius:6px; padding:6px 10px;">
+          <img src="assets/logo-industrial-technology.png" alt="Industrial Technology" style="height:24px; display:block;">
+        </div>
+        <div style="font-size:12.5px; color:{{ vars.textDim }}; line-height:1.5;">Centro de Capacitación Técnica<br>Industrial Technology</div>
+      </div>
+
+      <div style="font-size:13px; color:{{ vars.textDim }}; line-height:1.9;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:{{ vars.accent }}; margin-bottom:6px;">Contacto</div>
+        <div>[Dirección de la empresa]</div>
+        <div>[Teléfono de contacto]</div>
+        <div>[correo@industrialtechnology.com]</div>
+      </div>
+
+      <div style="font-size:12px; color:{{ vars.textDim }};">© {{ year }} Industrial Technology. Todos los derechos reservados.</div>
+    </div>
+  </footer>
 </div>
 
-<script>
-/* ============================================================
-   CATÁLOGO DE CAPACITACIONES
-   Para agregar una nueva capacitación en el futuro, sumar un
-   objeto a este array — no hace falta tocar el resto del archivo.
-   ============================================================ */
-const TRAININGS = [
-  {
-    id: 'vacon-nxp',
-    icon: '⚙️',
-    title: 'VACON NXP',
-    meta: '12 módulos · Variadores de frecuencia',
-    desc: 'Arquitectura de potencia, tarjetas de control, redes de comunicación, programación NCDrive, puesta en marcha, diagnóstico de fallas y mantenimiento.',
-    href: 'capacitaciones/vacon-nxp/index.html',
-    badge: 'Disponible'
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440},&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;dark&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Tema&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#e8912b&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#e8912b&quot;,&quot;#d97706&quot;,&quot;#c2410c&quot;,&quot;#4f6b85&quot;],&quot;section&quot;:&quot;Tema&quot;},&quot;showComingSoon&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Cursos&quot;}}">
+class Component extends DCLogic {
+  state = {
+    theme: this.props.defaultTheme || 'dark',
+    progress: {}
+  };
+
+  componentDidMount() {
+    const ids = ['vacon-nxp', 'abb-acs800'];
+    const progress = {};
+    ids.forEach(id => {
+      try {
+        const raw = localStorage.getItem('vfd_progress_' + id);
+        progress[id] = raw ? JSON.parse(raw) : { done: 0, total: 0 };
+      } catch (e) {
+        progress[id] = { done: 0, total: 0 };
+      }
+    });
+    this.setState({ progress });
   }
-];
 
-const THEME_KEY = 'capacitacion-theme';
-function applyTheme(){
-  const saved = localStorage.getItem(THEME_KEY);
-  if(saved === 'light'){ document.documentElement.classList.add('light-theme'); }
-  else { document.documentElement.classList.remove('light-theme'); }
+  palette(theme) {
+    return theme === 'light' ? {
+      bg: '#eef1f4', bgAlt: '#ffffff', panel: '#ffffff', panelRaised: '#f2f4f7',
+      line: '#d8dee4', lineSoft: '#e3e7eb', text: '#141a20', textDim: '#5a6572',
+      accent: this.props.accentColor || '#c76a12'
+    } : {
+      bg: '#0a0e13', bgAlt: '#10151c', panel: '#131a22', panelRaised: '#1a232d',
+      line: '#28323c', lineSoft: '#1e2830', text: '#eef2f6', textDim: '#8b97a3',
+      accent: this.props.accentColor || '#e8912b'
+    };
+  }
+
+  courseDefs() {
+    return [
+      { id: 'vacon-nxp', title: 'VACON NXP', brand: 'VACON', model: 'Serie NXP · Variador de frecuencia', desc: 'Seguridad eléctrica, arquitectura de potencia, tarjetas de control y diagnóstico de fallas.', href: 'capacitaciones/vacon-nxp/index.html', locked: false },
+      { id: 'abb-acs800', title: 'ABB ACS800', brand: 'ABB', model: 'Serie ACS800 · Variador de frecuencia', desc: 'Fundamentos de instalación, parametrización y mantenimiento preventivo del equipo.', href: '#', locked: this.props.showComingSoon ?? true }
+    ];
+  }
+
+  renderVals() {
+    const theme = this.state.theme;
+    const v = this.palette(theme);
+    const isLight = theme === 'light';
+
+    const pageStyle = `position:relative; min-height:100vh; background:${v.bg}; font-family:'Inter',sans-serif; transition:background .3s ease; overflow:hidden;`;
+    const headerStyle = `position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; height:72px; padding:0 40px; background:${v.bgAlt}; border-bottom:1px solid ${v.line};`;
+    const navLinkStyle = `font-size:13.5px; font-weight:500; color:${v.textDim}; text-decoration:none;`;
+
+    const themeSwitchStyle = `width:44px; height:24px; border-radius:12px; background:${isLight ? v.lineSoft : v.panelRaised}; border:1px solid ${v.line}; cursor:pointer; position:relative; padding:0; display:flex; align-items:center;`;
+    const themeKnobStyle = `position:absolute; top:2px; left:${isLight ? '3px' : '21px'}; width:18px; height:18px; border-radius:50%; background:${v.accent}; transition:left .2s ease;`;
+
+    const heroStyle = `position:relative; padding:96px 40px 90px 40px; overflow:hidden; background:${v.bgAlt}; border-bottom:1px solid ${v.line};`;
+    const heroGridBg = `position:absolute; inset:0; opacity:${isLight ? 0.5 : 0.35}; background-image:linear-gradient(${v.line} 1px, transparent 1px), linear-gradient(90deg, ${v.line} 1px, transparent 1px); background-size:44px 44px; mask-image:radial-gradient(ellipse at center, black 0%, transparent 72%);`;
+    const pageLogoWatermarkStyle = `position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(1100px,90vw); opacity:${isLight ? 0.1 : 0.08}; filter:blur(3px) ${isLight ? 'grayscale(0.2)' : 'grayscale(0.3) brightness(1.6)'}; pointer-events:none; user-select:none; z-index:0; box-shadow:0 60px 140px rgba(0,0,0,${isLight ? 0.08 : 0.5});`;
+
+    const ctaStyle = `display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:${isLight ? '#ffffff' : '#0a0e13'}; background:${v.accent}; padding:14px 26px; border-radius:5px; text-decoration:none;`;
+
+    const footerStyle = `background:${v.bgAlt}; border-top:1px solid ${v.line};`;
+
+    const courses = this.courseDefs().map(c => {
+      const p = this.state.progress[c.id] || { done: 0, total: 0 };
+      const pct = c.locked ? 0 : (p.total > 0 ? Math.round((p.done / p.total) * 100) : 0);
+      const completed = !c.locked && p.total > 0 && p.done >= p.total;
+
+      let buttonLabel = 'Comenzar';
+      if (c.locked) buttonLabel = 'Próximamente';
+      else if (completed) buttonLabel = 'Repasar';
+      else if (pct > 0) buttonLabel = 'Continuar';
+
+      const ringPct = completed ? 100 : pct;
+      const ringColor = c.locked ? v.line : v.accent;
+      const ringStyle = `width:40px; height:40px; border-radius:50%; background:conic-gradient(${ringColor} ${ringPct * 3.6}deg, ${v.lineSoft} 0deg); display:flex; align-items:center; justify-content:center; flex-shrink:0;`;
+      const ringInnerStyle = `width:30px; height:30px; border-radius:50%; background:${v.panel}; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:9.5px; font-weight:600; color:${c.locked ? v.textDim : v.text};`;
+      const ringLabel = c.locked ? '—' : (completed ? '✓' : `${pct}%`);
+
+      const cardStyle = `background:${v.panel}; border:1px solid ${v.line}; border-radius:10px; padding:24px; display:flex; flex-direction:column; opacity:${c.locked ? 0.72 : 1};`;
+      const brandBadgeStyle = `font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:${v.textDim}; background:${v.panelRaised}; border:1px solid ${v.line}; padding:5px 10px; border-radius:4px;`;
+      const barFillStyle = `height:100%; width:${ringPct}%; background:${c.locked ? v.line : v.accent}; border-radius:2px; transition:width .3s ease;`;
+      const buttonStyle = c.locked
+        ? `display:block; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; color:${v.textDim}; background:transparent; border:1px solid ${v.line}; padding:11px; border-radius:5px; text-decoration:none; pointer-events:none;`
+        : `display:block; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.03em; color:${isLight ? '#ffffff' : '#0a0e13'}; background:${v.accent}; padding:11px; border-radius:5px; text-decoration:none;`;
+
+      return { ...c, cardStyle, brandBadgeStyle, ringStyle, ringInnerStyle, ringLabel, barFillStyle, buttonStyle, buttonLabel };
+    });
+
+    return {
+      vars: v,
+      pageStyle, headerStyle, navLinkStyle, themeSwitchStyle, themeKnobStyle,
+      heroStyle, heroGridBg, pageLogoWatermarkStyle, ctaStyle, footerStyle,
+      courses,
+      year: new Date().getFullYear(),
+      toggleTheme: () => this.setState(s => ({ theme: s.theme === 'dark' ? 'light' : 'dark' }))
+    };
+  }
 }
-applyTheme();
-document.getElementById('themeToggle').addEventListener('click', ()=>{
-  const isLight = document.documentElement.classList.toggle('light-theme');
-  localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
-});
 
-function renderTrainings(){
-  const grid = document.getElementById('traingrid');
-  grid.innerHTML = TRAININGS.map(t => `
-    <a class="traincard reveal" href="${t.href}">
-      <div class="top">
-        <div class="icon">${t.icon}</div>
-        <span class="badge">${t.badge}</span>
-      </div>
-      <h3>${t.title}</h3>
-      <div class="meta">${t.meta}</div>
-      <p>${t.desc}</p>
-      <div class="cta">Ingresar →</div>
-    </a>
-  `).join('');
-}
-renderTrainings();
-
-const items = document.querySelectorAll('.reveal');
-items.forEach((el,i)=>{ el.style.transitionDelay = Math.min(i*70,420)+'ms'; });
-requestAnimationFrame(()=>requestAnimationFrame(()=>{ items.forEach(el=>el.classList.add('in')); }));
 </script>
 </body>
 </html>

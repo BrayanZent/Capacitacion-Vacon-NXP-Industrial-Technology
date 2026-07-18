@@ -913,6 +913,15 @@ function saveProgress(){
     MODULES.forEach(m=>{ if(m.quiz) data[m.id] = state.quizProgress[m.id].answered; });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }catch(e){ console.warn('No se pudo guardar el progreso:', e); }
+  syncPortalProgress();
+}
+function syncPortalProgress(){
+  try{
+    const teachable = MODULES.filter(m=>!m.isOverview);
+    const total = teachable.reduce((s,m)=>s+m.quiz.length,0);
+    const done = teachable.reduce((s,m)=>s+state.quizProgress[m.id].answered.filter(a=>a!==null).length,0);
+    localStorage.setItem('vfd_progress_vacon-nxp', JSON.stringify({ done, total }));
+  }catch(e){ console.warn('No se pudo sincronizar el progreso con el portal:', e); }
 }
 function resetAllProgress(){
   MODULES.forEach(m=>{
@@ -924,6 +933,7 @@ function resetAllProgress(){
   render();
 }
 loadProgress();
+syncPortalProgress();
 
 /* ============================================================
    TEMA
